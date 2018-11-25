@@ -172,144 +172,103 @@
 
 	<!-- Begin Content -->
 	<div id="content">
-	<h1 class="title">Tabs, Toggle and Tables</h1>
+	<h1 class="title">졸업요건 진행상황</h1>
+	
 	<div class="line"></div>
-	<div class="intro">Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</div>
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://rawgit.com/kottenator/jquery-circle-progress/1.2.1/dist/circle-progress.js"></script>
+  <script>
+  $('.circle').circleProgress({
+    value: 0.75,
+    fill: {gradient: [['pink',1], ['pink',1]], gradientAngle: Math.PI / 4}
+  }).on('circle-animation-progress', function(event, progress, stepValue) {
+    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+  });
+  </script>
+  <style>
+.circle {
+  width: 100px;
+  margin: 6px 6px 20px;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  line-height: 1.2;
+}
+.radialBar {width:400px; border:3px solid green; display:flex; justify-content:space-around;}
 
-	<div class="tabbed-content">
-        <h3>Tabs</h3>
-        <ul class="tabs">
-          <li><a href="#tab1">This is</a></li>
-          <li><a href="#tab2">Tabbed</a></li>
-          <li><a href="#tab3">Content</a></li>
-        </ul>
-        <div class="tab_container">
-          <div style="display: none;" id="tab1" class="tab_content">
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p1.jpg" class="left round" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus. Vestibulum ullamcorper quam nec lorem aliquam id feugiat risus tincidunt. Etiam molestie, risus eu gravida lobortis, velit sapien aliquam lectus, nec hendrerit lectus erat ac libero. Aenean fermentum luctus viverra. Pellentesque id lectus ante, vel tristique elit. </p>
-          </div>
-          <div style="display: none;" id="tab2" class="tab_content">
-            <h4>We love tabs</h4>
-            <p><img src="style/images/art/p2.jpg" class="right round" alt="" />Etiam molestie, risus eu gravida lobortis, velit sapien aliquam lectus, nec hendrerit lectus erat ac libero. Aenean fermentum luctus viverra. Pellentesque id lectus ante, vel tristique elit. Fusce mattis, purus non consectetur cursus, justo nisi viverra sem, ac lobortis ipsum sapien vel purus. Vivamus aliquet gravida nibh sit amet accumsan. Fusce et lorem nunc. Sed convallis, tortor nec ornare sagittis, velit ligula varius sapien, eu cursus nisl purus sed felis. Morbi congue pellentesque quam, eu ultricies. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent. </p>
-          </div>
-          <div style="display: none;" id="tab3" class="tab_content">
-            <h4>Don't you?</h4>
-            <p>Nulla non tortor eget ligula dapibus semper non ut mauris. Nam feugiat, lorem a tempus auctor, odio nisl porttitor lacus, ut ultrices neque massa a odio. Pellentesque sit amet leo dictum nisl tempor malesuada id ut magna. Etiam non mauris eget massa sagittis euismod. Aliquam lectus nulla, consequat eget molestie id, malesuada sit amet lectus. Pellentesque eget justo sit amet nunc adipiscing semper at ac quam. Praesent a volutpat nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
-          </div>
-        </div>
-      </div>
+  .test{
+    height:30px;
+    width:39px;
+}
+  </style>
+	<h2>독후감</h2><br/>
+	
+	
+	<div class="radialBar">
+		  <p>읽은 권수 : 30 / 40 권 </p>
+	</div>
+	<div class="radialBar">
+	<div class="circle">
+	<p>75%</p>
+	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	</div>
+	</div><br/>
+	
+	<div class="line"></div>
+	
+	<h2>봉사활동</h2><br/>
+	
+	
+	<div class="radialBar">
+		  <p>횟수 3 / 10 번 </p> <p> 시간 6 / 20  시간</p>
+	</div>
+	<div class="radialBar">
+	<div class="circle">
+	<p>75%</p>
+	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	</div>
+		<div class="circle">
+	<p>75%</p>
+	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	</div>
+	</div><br/>
+	<div class="line"></div>
 
-      <br />
-      <div class="line"></div>
-      <h3>Toggle</h3>
+	<h2>이수 학점</h2><br/>
+	
 
-      <!-- Begin Toggle -->
-      <div class="toggle">
-        <h2 class="trigger">+ Click to title</h2>
-        <div class="togglebox">
-          <div>
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p3.jpg" class="left" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus.</p>
-          </div>
-        </div>
-      </div>
-      <!-- End Toggle -->
+	<div class="radialBar">
+		  <p>70 / 121 점</p>
+	</div>
+	<div class="radialBar">
+	<div class="circle">
+	<p>75%</p>
+	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	</div>
+	</div><br/>
+	
+	
+	
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://rawgit.com/kottenator/jquery-circle-progress/1.2.1/dist/circle-progress.js"></script>
+	<script>
+	$('.circle').circleProgress({
+    value: 0.75,
+    fill: {gradient: [['pink',1], ['pink',1]], gradientAngle: Math.PI / 4}
+	}).on('circle-animation-progress', function(event, progress, stepValue) {
+    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+	});
+	</script>
 
-      <!-- Begin Toggle -->
-      <div class="toggle">
-        <h2 class="trigger">+ Click to title</h2>
-        <div class="togglebox">
-          <div>
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p4.jpg" class="left" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus.</p>
-          </div>
-        </div>
-      </div>
-      <!-- End Toggle -->
+	
+	
 
-      <br />
-      <div class="line"></div>
-      <h2>Table 1</h2>
-      <table>
-        <tr>
-          <th><h4>Table Header 1</h4></th>
-          <th><h4>Table Header 2</h4></th>
-          <th class="center"><h4>
-            Centered Header 3
-            </h2></th>
-        </tr>
-        <tr>
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-        <tr class="even">
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-        <tr>
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-      </table>
-      <br />
-      <div class="line"></div>
-      <h2>Table 2</h2>
-      <table class="price">
-        <tr class="border_bottom">
-          <td>&nbsp;</td>
-          <td><h4>Free </h4></td>
-          <td><h4>Mini <span>10$ /<sup>month</sup></span></h4></td>
-          <td><h4>Medium <span>20$ /<sup>month</sup></span></h4></td>
-          <td><h4>Advanced <span>30$ /<sup>month</sup></span></h4></td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td>1</td>
-          <td>5</td>
-          <td>20</td>
-          <td>Unlimited</td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td>1</td>
-          <td>10</td>
-          <td>50</td>
-          <td>Unlimited</td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-      </table>
-
-
+     
     <!-- Begin Footer -->
     <div id="footer">
   	<div class="footer-box one-third">
@@ -356,7 +315,6 @@
   	</div>
     </div>
     <!-- End Footer -->
-
 
 	</div>
 	<!-- End Content -->
