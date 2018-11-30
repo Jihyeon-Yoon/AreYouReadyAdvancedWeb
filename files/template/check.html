@@ -16,7 +16,7 @@
 <!--[if IE 9]>
 <link rel="stylesheet" type="text/css" href="style/css/ie9.css" media="all" />
 <![endif]-->
-<script type="text/javascript" src="style/js/jquery-1.6.4.min.js"></script>
+
 <script type="text/javascript" src="style/js/ddsmoothmenu.js"></script>
 <script type="text/javascript" src="style/js/jquery.jcarousel.js"></script>
 <script type="text/javascript" src="style/js/jquery.prettyPhoto.js"></script>
@@ -35,6 +35,7 @@
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
 
+   <script src="https://www.gstatic.com/firebase/init.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -103,7 +104,7 @@
             firebase.initializeApp(config);
         }
         firebase.auth().signOut().then( () => {
-            console.log('logout sucess');
+            alert("로그아웃 되었습니다.");
 			$("#loginBtn").show();
 			$("#logoutBtn").hide();
 
@@ -113,14 +114,151 @@
     }
 	
 	firebase.auth().onAuthStateChanged(function(user) {
+			
+			var bookN="0",volunNum="0",volunTime="0",creditNum="0";
             if (user) {
 			$("#loginBtn").hide();
+
+		
+			 firebase.database().ref('/user/' + user.displayName+'/bookN').once('value').then(function(snapshot) {
+			  bookN = snapshot.val();
+			 var n1=parseInt(bookN);
+			 n1=n1/40;
+			  $("#bookNum").text(bookN);
+
+			  		
+				$('#circle1').circleProgress({
+	
+				value: n1,
+				fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+				}).on('circle-animation-progress', function(event, progress, stepValue) {
+				$(this).find('p').text(stepValue.toFixed(2).substr(1)*100+"%");
+				});
+	
+ 
+			});
+			 firebase.database().ref('/user/' + user.uid+'/volunN').once('value').then(function(snapshot) {
+			  volunN = snapshot.val();
+			 
+			  $("#volunNum").text(volunN);
+			 var n2=parseInt(volunN);
+			n2=n2/10;
+						  
+			$('#circle2').circleProgress({
+			value: n2,
+			fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+			}).on('circle-animation-progress', function(event, progress, stepValue) {
+			$(this).find('p').text(stepValue.toFixed(2).substr(1)*100+"%");
+			});
+			
+ 
+			})
+			 firebase.database().ref('/user/' + user.uid+'/volunT').once('value').then(function(snapshot) {
+			  volunT = snapshot.val();
+			 
+			  $("#volunTime").text(volunT);
+
+			 var n3=parseInt(volunT);
+				n3=n3/20;
+						
+ 
+				$('#circle3').circleProgress({
+				value: n3,
+				fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+				}).on('circle-animation-progress', function(event, progress, stepValue) {
+				$(this).find('p').text(stepValue.toFixed(2).substr(1)*100+"%");
+				});
+				
+			})
+			 firebase.database().ref('/user/' + user.uid+'/creditN').once('value').then(function(snapshot) {
+			  creditN = snapshot.val();
+			 	var n4=parseInt(creditN);
+				n4=n4/121;
+
+			  $("#creditNum").text(creditN);
+			  
+				$('#circle4').circleProgress({
+				value: n4,
+				fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+				}).on('circle-animation-progress', function(event, progress, stepValue) {
+				$(this).find('p').text(stepValue.toFixed(2).substr(1)*100+"%");
+				});
+	
+
+ 
+			})
+			
+		
 
             } else {
 			$("#logoutBtn").hide();
             }
         });
+			
+</script>
 
+<script>
+function saveClick(){
+	
+	var user =firebase.auth().currentUser;
+	var bookNum=$("#bookNum").text(), volunNum=$("#volunNum").text(),volunTime=$("#volunTime").text(),creditNum=$("#creditNum").text();
+	if(user!=null) {
+	 firebase.database().ref('user/' + user.displayName).set({
+		
+		bookN: bookNum,
+		volunN: volunNum,
+		volunT: volunTime,
+		creditN: creditNum
+  });
+	alert("저장완료");
+	location.reload();
+	}
+	}
+</script>
+<script>
+function bookNPlus() {
+var n=parseInt($("#bookNum").text());
+n++;
+$("#bookNum").text(n);
+}
+function bookNMinus() {
+var n=parseInt($("#bookNum").text());
+n--;
+$("#bookNum").text(n);
+}
+function volunNPlus() {
+var n=parseInt($("#volunNum").text());
+n++;
+$("#volunNum").text(n);
+}
+function volunNMinus() {
+var n=parseInt($("#volunNum").text());
+if(n>0)
+n--;
+$("#volunNum").text(n);
+}
+function volunTPlus() {
+var n=parseInt($("#volunTime").text());
+n++;
+$("#volunTime").text(n);
+}
+function volunTMinus() {
+var n=parseInt($("#volunTime").text());
+if(n>0)
+n--;
+$("#volunTime").text(n);
+}
+function creditNPlus() {
+var n=parseInt($("#creditNum").text());
+n++;
+$("#creditNum").text(n);
+}
+function creditNMinus() {
+var n=parseInt($("#creditNum").text());
+if(n>0)
+n--;
+$("#creditNum").text(n);
+}
 </script>
 </head>
 <body>
@@ -172,19 +310,24 @@
 
 	<!-- Begin Content -->
 	<div id="content">
-	<h1 class="title">졸업요건 진행상황</h1>
 	
+	<style>
+	.save {
+	width: 600px;
+  margin: 6px 6px 20px;
+  position: relative;
+  text-align: right;
+
+	}
+	</style>
+	<h1 class="title">졸업요건 진행상황</h1>
+	<div class="save">
+	<button id="saveBtn" onclick="saveClick();">업데이트</button>
+	</div>
 	<div class="line"></div>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="https://rawgit.com/kottenator/jquery-circle-progress/1.2.1/dist/circle-progress.js"></script>
-  <script>
-  $('.circle').circleProgress({
-    value: 0.75,
-    fill: {gradient: [['pink',1], ['pink',1]], gradientAngle: Math.PI / 4}
-  }).on('circle-animation-progress', function(event, progress, stepValue) {
-    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
-  });
-  </script>
+
   <style>
 .circle {
   width: 100px;
@@ -194,7 +337,7 @@
   text-align: center;
   line-height: 1.2;
 }
-.radialBar {width:400px; border:3px solid green; display:flex; justify-content:space-around;}
+.radialBar {width:600px; border:4px solid #030066; display:flex; justify-content:space-around;}
 
   .test{
     height:30px;
@@ -205,13 +348,13 @@
 	
 	
 	<div class="radialBar">
-		  <p>읽은 권수 : 30 / 40 권 </p>
+		  <p><b id="bookNum" style="color:red">0</b> / 40권 </p>
 	</div>
 	<div class="radialBar">
-	<div class="circle">
-	<p>75%</p>
-	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
-	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	<div class="circle" id="circle1">
+	<p id="percent1">0%</p>
+	<button onclick="bookNPlus();" class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button onclick="bookNMinus();" class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
 	</div>
 	</div><br/>
 	
@@ -221,18 +364,18 @@
 	
 	
 	<div class="radialBar">
-		  <p>횟수 3 / 10 번 </p> <p> 시간 6 / 20  시간</p>
+		  <p><b id="volunNum" style="color:red">0</b> / <span>10<span> 번 </p> <p><b id="volunTime" style="color:red">0</b> / 20 시간</p>
 	</div>
 	<div class="radialBar">
-	<div class="circle">
-	<p>75%</p>
-	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
-	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	<div class="circle" id="circle2">
+	<p id="percent2">0%</p>
+	<button onclick="volunNPlus();"  class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button onclick="volunNMinus();" class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
 	</div>
-		<div class="circle">
-	<p>75%</p>
-	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
-	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+		<div class="circle" id="circle3">
+	<p id="percent3">0%</p>
+	<button onclick="volunTPlus();" class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button onclick="volunTMinus();" class="test" ><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
 	</div>
 	</div><br/>
 	<div class="line"></div>
@@ -241,13 +384,13 @@
 	
 
 	<div class="radialBar">
-		  <p>70 / 121 점</p>
+		  <p><b id="creditNum" style="color:red">0</b> / 121 점</p>
 	</div>
 	<div class="radialBar">
-	<div class="circle">
-	<p>75%</p>
-	<button class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
-	<button class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
+	<div class="circle" id="circle4">
+	<p id="percent4">0%</p>
+	<button onclick="creditNPlus();" class="test"><img src="style/images/plus.png" width="25px" height="25px" />&nbsp; </button> 
+	<button onclick="creditNMinus();" class="test"><img src="style/images/minus.png"  width="25px" height="25px" />&nbsp;  </button>
 	</div>
 	</div><br/>
 	
@@ -257,9 +400,39 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://rawgit.com/kottenator/jquery-circle-progress/1.2.1/dist/circle-progress.js"></script>
 	<script>
-	$('.circle').circleProgress({
-    value: 0.75,
-    fill: {gradient: [['pink',1], ['pink',1]], gradientAngle: Math.PI / 4}
+	$('#circle1').circleProgress({
+	
+	value: 0,
+	fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+	}).on('circle-animation-progress', function(event, progress, stepValue) {
+	$(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+	});	
+ 
+
+	$('#circle2').circleProgress({
+    value: 0,
+    fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+	}).on('circle-animation-progress', function(event, progress, stepValue) {
+    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+	});
+	
+	$('#circle3').circleProgress({
+    value: 0,
+    fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+	}).on('circle-animation-progress', function(event, progress, stepValue) {
+    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+	});
+	
+	$('#circle4').circleProgress({
+    value: 0,
+    fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
+	}).on('circle-animation-progress', function(event, progress, stepValue) {
+    $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
+	});
+	
+	$('#circle5').circleProgress({
+    value: 0,
+    fill: {gradient: [['red',1], ['red',1]], gradientAngle: Math.PI / 4}
 	}).on('circle-animation-progress', function(event, progress, stepValue) {
     $(this).find('b').text(stepValue.toFixed(2).substr(1)*100+"%");
 	});
