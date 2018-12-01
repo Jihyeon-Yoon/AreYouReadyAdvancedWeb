@@ -168,25 +168,57 @@
 
 	</div>
 	<!-- End Sidebar -->
+<style>
 
+	td{
+	position: relative;
+	text-align: center;
+	font-weight:500;
+	cursor:pointer;
+	}
+
+	.toptd{
+	font-weight:1000;
+	background-color:#EAEAEA;
+	cursor:auto;
+	}
+
+	</style>
 	<!-- Begin Content -->
 	<div id="content">
 	<h1 class="title">Get in Touch</h1>
 	<div class="line"></div>
+	
+	<table>
+	<tr class="toptd">
+	<td>글번호</td><td class="top">제목</td><td class="top">글쓴이</td><td class="top">날짜</td>
+	</tr>
+	<tr>
+	<td>2</td><td>안녕하세요안녕하세요안녕하세요</td><td>익명</td><td>2018.11.30</td>
+	<tr>
+	<td>1</td><td>안녕하세요안녕하세요안녕하세요</td><td>익명</td><td>2018.11.30</td>
+	</tr>
+	
+	
+	
+	</table>
+	
+	
+	
+	<div class="line"></div>
+
 	<div class="intro">Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</div>
 
-<div class="map">
-   <iframe width="700" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/?ie=UTF8&amp;ll=40.959289,29.082184&amp;spn=0.012963,0.022659&amp;z=14&amp;output=embed"></iframe>
-</div>
-    <br /> <br />
-
-    <h3>Ipsum Tortor Vestibulum Sollicitudin</h3>
-
-    <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed posuere consectetur est at lobortis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
 
  <br />
 
     <!-- Begin Form -->
+	
+	<div class="toggle">
+        <h2 class="trigger">+ Click to title</h2>
+        <div class="togglebox">
+          <div>
+         
           <div class="form-container">
             <form class="forms" action="contact/form-handler.php" method="post">
               <fieldset>
@@ -195,10 +227,7 @@
                     <label>Name</label>
                     <input type="text" name="name" value="" class="text-input required" title="" />
                   </li>
-                  <li class="form-row text-input-row">
-                    <label>Email</label>
-                    <input type="text" name="email" value="" class="text-input required email" title="" />
-                  </li>
+                
                   <li class="form-row text-input-row">
                     <label>Subject</label>
                     <input type="text" name="subject" value="" class="text-input required" title="" />
@@ -220,6 +249,11 @@
             </form>
             <div class="response"></div>
           </div>
+
+		 </div>
+        </div>
+      </div>
+      
         <!-- End Form -->
 
 
