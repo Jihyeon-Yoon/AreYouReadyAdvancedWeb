@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
 <meta charset="UTF-8">
-<title>Caprice</title>
+<title>AreYouReady?!</title>
 <link rel="shortcut icon" type="image/x-icon" href="style/images/favicon.png" />
 <link rel="stylesheet" type="text/css" href="style.css" media="all" />
 <link href='http://fonts.googleapis.com/css?family=Amaranth' rel='stylesheet' type='text/css'>
@@ -24,20 +24,181 @@
 <script type="text/javascript" src="style/js/jquery.flexslider-min.js"></script>
 <script type="text/javascript" src="style/js/jquery.masonry.min.js"></script>
 <script type="text/javascript" src="style/js/jquery.slickforms.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+
+<!-- Add additional services that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyA_-eCLWFI4rGFRheZab_B6YuwyBrYxn0s",
+    authDomain: "areyouready-a2972.firebaseapp.com",
+    databaseURL: "https://areyouready-a2972.firebaseio.com",
+    projectId: "areyouready-a2972",
+    storageBucket: "areyouready-a2972.appspot.com",
+    messagingSenderId: "366382434226"
+  };
+  firebase.initializeApp(config);
+
+
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        .then(function() {
+            // Existing and future Auth states are now persisted in the current
+            // session only. Closing the window would clear any existing state even
+            // if a user forgets to sign out.
+            // ...
+            // New sign-in will be persisted with session persistence.
+            return firebase.auth().signInWithPopup(provider);
+        })
+        .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+        });
+
+
+
+
+
+    // Initialize Firebase
+	function login() {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
+        var provider = new firebase.auth.GoogleAuthProvider();
+
+
+        // 인증하기
+        firebase.auth().signInWithPopup(provider).then(function (result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            var id= user.email;
+            alert("로그인 되었습니다.");
+            console.log(user)		// 인증 후 어떤 데이터를 받아오는지 확인해보기 위함.
+			$("#loginBtn").hide();
+			$("#logoutBtn").show();//...
+        }).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+        });
+    }
+    //로그아웃
+    function logout(){
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
+        }
+        firebase.auth().signOut().then( () => {
+            console.log('logout sucess');
+			$("#loginBtn").show();
+			$("#logoutBtn").hide();
+
+        }).catch(function (error) {
+            console.log('code:' + error.code + 'message' + error.message);
+        });
+    }
+
+	firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+			$("#loginBtn").hide();
+
+            } else {
+			$("#logoutBtn").hide();
+            }
+        });
+
+</script>
+
+
+    <script>
+
+
+            firebase.auth().onAuthStateChanged(function(user) {
+
+              if (user) {
+                $("#loginBtn").hide();
+              } else {
+                alert("로그인이 필요합니다.");
+                login();
+              }
+            });
+
+
+        setTimeout(function() {
+
+            var users = firebase.auth().currentUser;
+            //var j = 3;
+            var index;
+            var chkbox = $("input[name=gradePoint]");
+            var getCheck =  firebase.database().ref('/user/'+users.displayName+'/check/');
+
+            getCheck.once('value').then(function (data) {
+                index = data.val();
+
+                //console.log(index);
+                for(i = 0;i<index.length;i++){
+                    if(index[i] == 'checked') {
+                        chkbox[i].checked = true;
+                    }
+                    else{}
+                }
+            });
+        }, 1000);
+
+
+
+
+        function getTotal(){
+
+            var user = firebase.auth().currentUser;
+            var send_cnt = 0;
+            var chkbox = $("input[name=gradePoint]");
+            var total = 0;
+
+            for(i=0;i<chkbox.length;i++) {
+                firebase.database().ref('/user/'+user.displayName+'/check/'+i).set('unchecked');
+            }
+
+            for(i=0;i<chkbox.length;i++) {
+                if (chkbox[i].checked == true){
+                    total = total + parseInt(chkbox[i].value);
+                    firebase.database().ref('/user/'+user.displayName+'/check/'+i).set('checked');
+                    send_cnt++;
+                }
+            }
+
+            alert("저장되었습니다.");
+
+            firebase.database().ref('/user/'+user.displayName+'/gradePoint').set(total);
+        }
+
+    </script>
 </head>
 <body>
 <!-- Begin Wrapper -->
 <div id="wrapper">
 	<!-- Begin Sidebar -->
 	<div id="sidebar">
-		 <div id="logo"><a href="home.html"><img src="style/images/logo.png" alt="Caprice" /></a></div>
+        <div id="logo"><a href="index.html"><img src="style/images/ayr_logo.png" width="200px" ; height="60px" ; alt="AreYouReady?!" /></a></div>
 
-	<!-- Begin Menu -->
+        <!-- Begin Menu -->
 	<div id="menu" class="menu-v">
 		<ul>
-			<li><a href="home.html" >홈</a></li>
+			<li><a href="index.html" >홈</a></li>
 			<li><a href="requirement.html" >졸업요건</a></li>
-			<li><a href="credit2017.html" class="active">이수과목</a>
+			<li><a href="" class="active">이수과목</a>
 				<ul>
 					<li><a href="credit2017.html">2017</a></li>
 					<li><a href="credit2016.html">2016</a></li>
@@ -51,218 +212,405 @@
 			<li><a href="check.html">진행체크</a></li>
 			<li><a href="site.html">참고사이트</a></li>
 			<li><a href="bulletinBoard.html">게시판</a></li>
-			<li><a href="feedback.html">피드백</a></li>
-		</ul>
+            <li><a href="mailto:wjsgudwls89@gmail.com">피드백</a></li>
+            <li id="loginBtn"><img src="style/images/login.png"  onclick="login()" width="80px"; height="35px"; alt="login" /></li>
+            <li id="logoutBtn"><img src="style/images/logout.png" onclick="logout()" width="80px"; height="35px"; alt="logout" /></li>
+
+        </ul>
 	</div>
     <!-- End Menu -->
 
+	<style>
+	.loginout{
+	font-size:30px;
+	cursor:pointer;
+	}
+	</style>
+    <div  class="sidebox">
+    <ul class="share" >
 
-    <div class="sidebox">
-    <ul class="share">
-    	<li><a href="#"><img src="style/images/icon-rss.png" alt="RSS" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-facebook.png" alt="Facebook" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-twitter.png" alt="Twitter" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-dribbble.png" alt="Dribbble" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-linkedin.png" alt="LinkedIn" /></a></li>
     </ul>
     </div>
-
 
 	</div>
 	<!-- End Sidebar -->
 
 	<!-- Begin Content -->
 	<div id="content">
-	<h1 class="title">Tabs, Toggle and Tables</h1>
-	<div class="line"></div>
-	<div class="intro">Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</div>
-
+        <h1 class="title">이수과목</h1>
+        <div class="line"></div>
+        <div class="title">이수과목 체크리스트를 통하여 자신이 총 몇학점을 이수 하였는지 알 수 있습니다.</div><br/>
+        <div class="line"></div>
 	<div class="tabbed-content">
-        <h3>Tabs</h3>
+        <h3>2015 학번</h3>
         <ul class="tabs">
-          <li><a href="#tab1">This is</a></li>
-          <li><a href="#tab2">Tabbed</a></li>
-          <li><a href="#tab3">Content</a></li>
+          <li><a href="#tab1">1학년</a></li>
+          <li><a href="#tab2">2학년</a></li>
+          <li><a href="#tab3">3학년</a></li>
+            <li><a href="#tab4">4학년</a></li>
+
         </ul>
         <div class="tab_container">
-          <div style="display: none;" id="tab1" class="tab_content">
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p1.jpg" class="left round" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus. Vestibulum ullamcorper quam nec lorem aliquam id feugiat risus tincidunt. Etiam molestie, risus eu gravida lobortis, velit sapien aliquam lectus, nec hendrerit lectus erat ac libero. Aenean fermentum luctus viverra. Pellentesque id lectus ante, vel tristique elit. </p>
-          </div>
-          <div style="display: none;" id="tab2" class="tab_content">
-            <h4>We love tabs</h4>
-            <p><img src="style/images/art/p2.jpg" class="right round" alt="" />Etiam molestie, risus eu gravida lobortis, velit sapien aliquam lectus, nec hendrerit lectus erat ac libero. Aenean fermentum luctus viverra. Pellentesque id lectus ante, vel tristique elit. Fusce mattis, purus non consectetur cursus, justo nisi viverra sem, ac lobortis ipsum sapien vel purus. Vivamus aliquet gravida nibh sit amet accumsan. Fusce et lorem nunc. Sed convallis, tortor nec ornare sagittis, velit ligula varius sapien, eu cursus nisl purus sed felis. Morbi congue pellentesque quam, eu ultricies. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent. </p>
-          </div>
-          <div style="display: none;" id="tab3" class="tab_content">
-            <h4>Don't you?</h4>
-            <p>Nulla non tortor eget ligula dapibus semper non ut mauris. Nam feugiat, lorem a tempus auctor, odio nisl porttitor lacus, ut ultrices neque massa a odio. Pellentesque sit amet leo dictum nisl tempor malesuada id ut magna. Etiam non mauris eget massa sagittis euismod. Aliquam lectus nulla, consequat eget molestie id, malesuada sit amet lectus. Pellentesque eget justo sit amet nunc adipiscing semper at ac quam. Praesent a volutpat nulla. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
-          </div>
+            <div style="display: none;" id="tab1" class="tab_content">
+                <style type="text/css">
+                    .tg  {border-collapse:collapse;border-spacing:0;border-color:#999;}
+                    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#444;background-color:white;}
+                    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;
+                        border-width:1px;overflow:hidden;word-break:normal;border-color:#999;color:#fff;background-color:#b1b4da;}
+                    .tg .tg-baqh{text-align:center;vertical-align:top}
+                    .tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+                </style>
+                <table class="tg">
+                    <tr>
+                        <th class="tg-c3ow">과목</th>
+                        <th class="tg-c3ow">학점</th>
+                        <th class="tg-c3ow">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">컴퓨터 프로그래밍</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/> </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">컴퓨터 구조</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">이산 수학</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">인성세미나 1</td>
+                        <td class="tg-c3ow">1</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="1" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">Academic English 0-3</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">경제학개론</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                </table>
+                <style type="text/css">
+                    .ta  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}
+                    .ta td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;}
+                    .ta th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;}
+                    .ta .ta-baqh{text-align:center;vertical-align:top}
+                    .ta .ta-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+                </style>
+                <table class="ta">
+                    <tr>
+                        <th class="ta-baqh">과목</th>
+                        <th class="ta-c3ow">학점</th>
+                        <th class="ta-baqh">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">소프트웨어 구현 패턴</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">웹프로그래밍</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">확률 통계</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">과학 기술 글쓰기</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">Academic English 1-4</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">역사와 상상력</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">글로벌시대의 리더십론</td>
+                        <td class="ta-baqh">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: none;" id="tab2" class="tab_content">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-c3ow">과목</th>
+                        <th class="tg-c3ow">학점</th>
+                        <th class="tg-c3ow">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">자료구조</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/> </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">객체지향 프로그래밍</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">운영 체제</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">Speaking Practice A</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">중국어 1</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">미술감상과 비평</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                </table>
+                <style type="text/css">
+                    .ta  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}
+                    .ta td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;}
+                    .ta th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;}
+                    .ta .ta-baqh{text-align:center;vertical-align:top}
+                    .ta .ta-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+                </style>
+                <table class="ta">
+                    <tr>
+                        <th class="ta-baqh">과목</th>
+                        <th class="ta-c3ow">학점</th>
+                        <th class="ta-baqh">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">컴퓨터 네트워크</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">알고리즘</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">데이터 베이스</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">Speaking Practice B</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">중국어 2</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">역사와 철학</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">심리학개론</td>
+                        <td class="ta-c3ow">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">사회봉사</td>
+                        <td class="ta-c3ow">0</td>
+                        <td class="ta-baqh"><input type="checkbox" value="0" name="gradePoint"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: none;" id="tab3" class="tab_content">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-c3ow">과목</th>
+                        <th class="tg-c3ow">학점</th>
+                        <th class="tg-c3ow">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">모바일 프로그래밍</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/> </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">소프트웨어 공학</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">컴퓨터 그래픽스</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">경영학원론</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">소프트웨어 산업 세미나</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">졸업작품 1</td>
+                        <td class="tg-c3ow">1</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="1" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">건축문화사</td>
+                        <td class="tg-c3ow">2</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                </table>
+                <style type="text/css">
+                    .ta  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}
+                    .ta td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;}
+                    .ta th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;}
+                    .ta .ta-baqh{text-align:center;vertical-align:top}
+                    .ta .ta-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+                </style>
+                <table class="ta">
+                    <tr>
+                        <th class="ta-baqh">과목</th>
+                        <th class="ta-c3ow">학점</th>
+                        <th class="ta-baqh">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">고급 웹프로그래밍</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">분산시스템</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">로봇공학</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">마케팅</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">졸업작품 2</td>
+                        <td class="ta-c3ow">1</td>
+                        <td class="ta-baqh"><input type="checkbox" value="1" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">진로세미나</td>
+                        <td class="ta-baqh">1</td>
+                        <td class="ta-baqh"><input type="checkbox" value="1" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">생명과 나눔</td>
+                        <td class="ta-baqh">2</td>
+                        <td class="ta-baqh"><input type="checkbox" value="2" name="gradePoint"/></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: none;" id="tab4" class="tab_content">
+
+                <table class="tg">
+                    <tr>
+                        <th class="tg-c3ow">과목</th>
+                        <th class="tg-c3ow">학점</th>
+                        <th class="tg-c3ow">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">데이터 마이닝</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/> </td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">멀티미디어</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">졸업 작품3</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">기술 경영</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">현장실습</td>
+                        <td class="tg-c3ow">1</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="1" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="tg-c3ow">진로관련 전공과목</td>
+                        <td class="tg-c3ow">3</td>
+                        <td class="tg-c3ow"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                </table>
+                <style type="text/css">
+                    .ta  {border-collapse:collapse;border-spacing:0;border-color:#aaa;}
+                    .ta td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;}
+                    .ta th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;
+                        word-break:normal;border-color:#aaa;color:#fff;background-color:#bfd6e3;}
+                    .ta .ta-baqh{text-align:center;vertical-align:top}
+                    .ta .ta-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+                </style>
+                <table class="ta">
+                    <tr>
+                        <th class="ta-baqh">과목</th>
+                        <th class="ta-c3ow">학점</th>
+                        <th class="ta-baqh">수강</th>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">컴퓨터보안</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">HCI</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    <tr>
+                        <td class="ta-baqh">기업가정신</td>
+                        <td class="ta-c3ow">3</td>
+                        <td class="ta-baqh"><input type="checkbox" value="3" name="gradePoint"/></td>
+                    </tr>
+                    </tr>
+                </table>
+            </div>
         </div>
-      </div>
-
-      <br />
-      <div class="line"></div>
-      <h3>Toggle</h3>
-
-      <!-- Begin Toggle -->
-      <div class="toggle">
-        <h2 class="trigger">+ Click to title</h2>
-        <div class="togglebox">
-          <div>
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p3.jpg" class="left" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus.</p>
-          </div>
-        </div>
-      </div>
-      <!-- End Toggle -->
-
-      <!-- Begin Toggle -->
-      <div class="toggle">
-        <h2 class="trigger">+ Click to title</h2>
-        <div class="togglebox">
-          <div>
-            <h4>Vestibulum ullamcorper</h4>
-            <p><img src="style/images/art/p4.jpg" class="left" alt="" />Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc rhoncus tortor quis eros bibendum a tempus est dapibus. Vivamus consectetur quam eu tellus porttitor ultrices. Nunc metus massa, ullamcorper sit amet malesuada a, porttitor in tellus.</p>
-          </div>
-        </div>
-      </div>
-      <!-- End Toggle -->
-
-      <br />
-      <div class="line"></div>
-      <h2>Table 1</h2>
-      <table>
-        <tr>
-          <th><h4>Table Header 1</h4></th>
-          <th><h4>Table Header 2</h4></th>
-          <th class="center"><h4>
-            Centered Header 3
-            </h2></th>
-        </tr>
-        <tr>
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-        <tr class="even">
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-        <tr>
-          <td>Division 1</td>
-          <td>Division 2</td>
-          <td class="center">Division 3</td>
-        </tr>
-      </table>
-      <br />
-      <div class="line"></div>
-      <h2>Table 2</h2>
-      <table class="price">
-        <tr class="border_bottom">
-          <td>&nbsp;</td>
-          <td><h4>Free </h4></td>
-          <td><h4>Mini <span>10$ /<sup>month</sup></span></h4></td>
-          <td><h4>Medium <span>20$ /<sup>month</sup></span></h4></td>
-          <td><h4>Advanced <span>30$ /<sup>month</sup></span></h4></td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td>1</td>
-          <td>5</td>
-          <td>20</td>
-          <td>Unlimited</td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td>1</td>
-          <td>10</td>
-          <td>50</td>
-          <td>Unlimited</td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr class="even">
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-        <tr>
-          <td class="right">Lorem Ipsum</td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="cross"></span></td>
-          <td><span class="check-icon"></span></td>
-        </tr>
-      </table>
-
-
-    <!-- Begin Footer -->
-    <div id="footer">
-  	<div class="footer-box one-third">
-  	<h3>Popular Posts</h3>
-			<ul class="popular-posts">
-				<li>
-					<a href="#"><img src="style/images/art/s1.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s2.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s3.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-			</ul>
-  	</div>
-  	<div class="footer-box one-third">
-  	<h3>About</h3>
-  	<p>Donec id elit non mi porta gravida at eget metus. Donec ullamcorper nulla non metus auctor fringilla.</p>
-  	<p>Lorem Ipsum Dolor Sit
-          Moon Avenue No:11/21
-          Planet City, Earth<br>
-          <br>
-          <span class="lite1">Fax:</span> +555 797 534 01<br>
-          <span class="lite1">Tel:</span> +555 636 646 62<br>
-          <span class="lite1">E-mail:</span> name@domain.com</p>
-
-
-  	</div>
-
-  	<div class="footer-box one-third last">
-  	<h3>Custom Text</h3>
-  	<p>Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit. </p>
-  	<p>Donec ullamcorper nulla non metus auctor fringilla. Maecenas faucibus mollis interdum. Curabitur blandit tempus porttitor.</p>
-  	</div>
+        <a type="button" class="button blue" onclick="getTotal()" style="float: right; margin-top: 20px"> 입력 </a>
     </div>
-    <!-- End Footer -->
 
 
-	</div>
-	<!-- End Content -->
+        <br />
 
-</div>
 <!-- End Wrapper -->
 <div class="clear"></div>
 <script type="text/javascript" src="style/js/scripts.js"></script>

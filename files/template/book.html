@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
 <meta charset="UTF-8">
-<title>Caprice</title>
+<title>AreYouReady?!</title>
 <link rel="shortcut icon" type="image/x-icon" href="style/images/favicon.png" />
 <link rel="stylesheet" type="text/css" href="style.css" media="all" />
 <link rel="stylesheet" type="text/css" media="screen" href="style/css/prettyPhoto.css"  />
@@ -25,6 +25,101 @@
 <script type="text/javascript" src="style/js/jquery.flexslider-min.js"></script>
 <script type="text/javascript" src="style/js/jquery.masonry.min.js"></script>
 <script type="text/javascript" src="style/js/jquery.slickforms.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+	<!-- Firebase App is always required and must be first -->
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+
+	<!-- Add additional services that you want to use -->
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+
+	<script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyA_-eCLWFI4rGFRheZab_B6YuwyBrYxn0s",
+            authDomain: "areyouready-a2972.firebaseapp.com",
+            databaseURL: "https://areyouready-a2972.firebaseio.com",
+            projectId: "areyouready-a2972",
+            storageBucket: "areyouready-a2972.appspot.com",
+            messagingSenderId: "366382434226"
+        };
+        firebase.initializeApp(config);
+
+
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+            .then(function() {
+                // Existing and future Auth states are now persisted in the current
+                // session only. Closing the window would clear any existing state even
+                // if a user forgets to sign out.
+                // ...
+                // New sign-in will be persisted with session persistence.
+                return firebase.auth().signInWithPopup(provider);
+            })
+            .catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            });
+
+
+
+
+
+        // Initialize Firebase
+        function login() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+            var provider = new firebase.auth.GoogleAuthProvider();
+
+
+            // 인증하기
+            firebase.auth().signInWithPopup(provider).then(function (result) {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                var id= user.email;
+                alert("로그인 되었습니다.");
+                console.log(user)		// 인증 후 어떤 데이터를 받아오는지 확인해보기 위함.
+                $("#loginBtn").hide();
+                $("#logoutBtn").show();//...
+            }).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+        }
+        //로그아웃
+        function logout(){
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+            firebase.auth().signOut().then( () => {
+                console.log('logout sucess');
+                $("#loginBtn").show();
+                $("#logoutBtn").hide();
+
+            }).catch(function (error) {
+                console.log('code:' + error.code + 'message' + error.message);
+            });
+        }
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                $("#loginBtn").hide();
+
+            } else {
+                $("#logoutBtn").hide();
+            }
+        });
+
+	</script>
 
 </head>
 <body>
@@ -32,14 +127,14 @@
 <div id="wrapper">
 	<!-- Begin Sidebar -->
 	<div id="sidebar">
-		 <div id="logo"><a href="index.html"><img src="style/images/logo.png" alt="Caprice" /></a></div>
+		 <div id="logo"><img src="style/images/ayr_logo.png" width="200px"; height="60px"; alt="AreYouReady?!" /></a></div>
 
 	<!-- Begin Menu -->
 	<div id="menu" class="menu-v">
 		<ul>
-			<li><a href="home.html" >홈</a></li>
+			<li><a href="index.html" >홈</a></li>
 			<li><a href="requirement.html">졸업요건</a></li>
-			<li><a href="credit2017.html">이수과목</a>
+			<li><a href="">이수과목</a>
 				<ul>
 					<li><a href="credit2017.html">2017</a></li>
 					<li><a href="credit2016.html">2016</a></li>
@@ -53,31 +148,28 @@
 			<li><a href="check.html">진행체크</a></li>
 			<li><a href="site.html">참고사이트</a></li>
 			<li><a href="bulletinBoard.html">게시판</a></li>
-			<li><a href="feedback.html">피드백</a></li>
+			<li><a href="mailto:wjsgudwls89@gmail.com">피드백</a></li>
+			<li id="loginBtn"><img src="style/images/login.png"  onclick="login()" width="80px"; height="35px"; alt="login" /></li>
+			<li id="logoutBtn"><img src="style/images/logout.png" onclick="logout()" width="80px"; height="35px"; alt="logout" /></li>
 		</ul>
 	</div>
     <!-- End Menu -->
 
-
-    <div class="sidebox">
+		<div class="sidebox">
     <ul class="share">
-    	<li><a href="#"><img src="style/images/icon-rss.png" alt="RSS" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-facebook.png" alt="Facebook" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-twitter.png" alt="Twitter" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-dribbble.png" alt="Dribbble" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-linkedin.png" alt="LinkedIn" /></a></li>
+
     </ul>
     </div>
-
 
 	</div>
 	<!-- End Sidebar -->
 
 	<!-- Begin Content -->
 	<div id="content">
-	<h1 class="title">Portfolio</h1>
+	<h1 class="title">추천도서</h1>
 	<div class="line"></div>
-	<div class="intro">Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</div>
+	<p>학교 추천 100권, 학과 추천 100권의 도서에 대한 정보를 얻을 수 있습니다.<br/>
+		졸업 요건으로 독후감 40권을 작성하는데 도움이 될 것입니다.</p>
 
 
 
@@ -87,137 +179,2050 @@
         <ul id="filtering-nav">
           <li class="show">Filter:</li>
           <li><a class="all" href="#all">All</a></li>
-          <li><a class="web" href="#web">Web</a></li>
-          <li><a class="photo" href="#photo">Photo</a></li>
-          <li><a class="video" href="#video">Video</a></li>
+          <li><a class="korean" href="#korean">문학(한)</a></li>
+          <li><a class="foreign" href="#foreign">문학(외)</a></li>
+          <li><a class="humanities" href="#humanities">인문사회</a></li>
+					<li><a class="science" href="#science">과학</a></li>
+					<li><a class="art" href="#art">예술</a></li>
         </ul>
         <div class="clear"></div>
         <div class="items">
-          <div class="box col2 web">
+					<!-- 문학(한) 시작-->
+          <div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-1.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k1.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Cras Ridiculus Justo Porta Ligula</a></h4>
-          <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit risus.</p>
+          <h4><b>입 속의 검은 잎</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 기형도<br/>
+						 <b>소개:</b> 일상 속에 내재하는 폭압과 공포의 심리구조를 표현한 유고시집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.1 ㄱ497ㅇ</p>
           </div>
-          <div class="box col2 photo">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-2.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k2.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Ullamcorper Sit Nibh Purus Fusce</a></h4>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+          <h4><b>고래</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 천명관<br/>
+						 <b>소개:</b> 격렬하고 파괴적인 인간의 욕망을 압도적인 서사로 담아낸 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅊ131ㄱ</p>
           </div>
-          <div class="box col2 video">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="http://vimeo.com/32364450" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p3-3.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k3.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Nibh Consectetur Malesuada Egestas</a></h4>
-          <p>Cras mattis consectetur purus sit amet fermentum. Vivamus sagittis lacus vel augue laoreet rutrum dolor.</p>
+          <h4><b>그 많던 싱아는 누가 다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 박완서<br/>
+						 <b>소개:</b> 1930~50년대를 배경으로 한, 박완서의 대표적 자전소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅂ253ㄱ3</p>
           </div>
-          <div class="box col2 web">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-4.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k4.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Ullamcorper Venenatis Commodo Fermentum</a></h4>
-          <p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet.</p>
+          <h4><b>김수영 전집1-시</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 김수영<br/>
+						 <b>소개:</b> 날카로운 언어와 자유에 대한 절규, 치열한 시 정신이 담긴 시집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.1 ㄱ721ㄱ2</p>
           </div>
-          <div class="box col2 video">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="http://www.youtube.com/watch?v=pyOyBVXDJ9Q" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p3-5.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k5.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k5.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Vestibulum Justo Nibh Ultricies Sem</a></h4>
-          <p>Aenean lacinia bibendum nulla sed consectetur. Donec ullamcorper nulla non metus auctor fringilla.</p>
+          <h4><b>당신들의 천국</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이청준<br/>
+						 <b>소개:</b> 개인과 집단, 자아와 세계의 갈등을 보여준 장편소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅇ914다</p>
           </div>
-          <div class="box col2 photo">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-6.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k6.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k6.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Ligula Fusce Pellentesque Magna Malesuada</a></h4>
-          <p>Curabitur blandit tempus porttitor. Donec ullamcorper nulla non metus auctor fringilla.</p>
+          <h4><b>덕혜옹주</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 권비영<br/>
+						 <b>소개:</b> 조선 최후의 황족 덕혜옹주의 이야기를 담은 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㄱ442ㄷ</p>
           </div>
-          <div class="box col2 photo">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-7.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k7.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k7.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Fusce Amet Malesuada Nullam Porta</a></h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Fusce dapibus, tellus ac cursus commodo.</p>
+          <h4><b>두근두근 내 인생</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 김애란<br/>
+						 <b>소개:</b> 가장 어린 부모와 가장 늙은 자식의, 청춘과 사랑을 그린 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 811.32 ㄱ746두</p>
           </div>
-          <div class="box col2 web">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-8.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k8.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k8.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Fusce Mattis Sollicitudin Cursus Dolor</a></h4>
-          <p>Donec ullamcorper nulla non metus auctor fringilla. Cras justo odio, dapibus ac facilisis in, egestas eget quam.</p>
+          <h4><b>밤은 노래한다</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 김연수<br/>
+						 <b>소개:</b> 1930년대 동만주 일대에서 벌어진 ‘민생단 사건’을 다룬 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㄱ764ㅂ</p>
           </div>
-          <div class="box col2 web">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p3-9.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k9.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k9.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Elit Ligula Dapibus Ornare Nullam</a></h4>
-          <p>Etiam porta sem malesuada magna mollis euismod. Donec id elit non mi porta gravida at eget metus.</p>
+          <h4><b>사평역에서</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 곽재구<br/>
+						 <b>소개:</b> 역사의 현장에 몸 붙이고 사는 젊은이의 함성이 배어 있는 시집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.1 ㄱ379ㅅ</p>
           </div>
-          <div class="box col2 video">
+					<div class="box col3 korean">
           <div class="image">
-          	<a href="http://www.purple-twinkie.com//FlashMovies/swf/28-EyeCandy.swf?width=500&height=430" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p3-10.jpg" alt="" /></a>
+          	<a href="style/images/book/korean/k10.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k10.jpg" width="auto"; height="300px"; alt="" /></a>
           </div>
-          <h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Pharetra Amet Fermentum Justo Vestibulum</a></h4>
-          <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Lorem ipsum dolor amet.</p>
+          <h4><b>소년이 온다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 한강<br/>
+						 <b>소개:</b> 광주민주화운동 당시의 상황과 그 이후 남겨진 사람들의 이야기<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅎ152ㅅ</p>
           </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k11.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k11.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>아랑은 왜</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 김영하<br/>
+						 <b>소개:</b> 16세기부터 전해오는 <아랑 전설>을 21세기로 불러들인 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㄱ772ㅇ</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k12.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k12.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>아름다운 날들</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 성석제<br/>
+						 <b>소개:</b> 기발한 상상력과 예리한 풍자로 주목받은 작가가 쓴 성장소설<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+					</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k13.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k13.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>원미동 사람들</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 양귀자<br/>
+						 <b>소개:</b> 80년대 소시민적 삶의 풍속도에 삶의 진실을 담은 연작 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅇ222ㅇ4</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k14.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k14.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>정본 백석 시집</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 백석<br/>
+						 <b>소개:</b> 토속적인 언어로 향토색 짙은 서정 세계를 표현한 백석 시집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.1 ㅂ391ㅈ</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k15.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k15.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>토지</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 박경리<br/>
+						 <b>소개:</b> 구한말에서 1945년에 이르기까지 민중들의 삶을 그린 대하소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅂ119토</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k16.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k16.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>난중일기</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이순신<br/>
+						 <b>소개:</b> 이순신이 임진왜란의 한복판에서 써내려간 고뇌와 결단의 기록<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k17.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k17.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>광장/구운몽</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 최인훈<br/>
+						 <b>소개:</b> 이념적으로 접근한 현대 한국 문학의 고전<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅊ279ㄱ5</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k18.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k18.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>난장이가 쏘아 올린 작은 공</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 조세희<br/>
+						 <b>소개:</b> 인문주의와 심미적 이성의 한 절정을 보여준 한국문학의 대표작<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.32 ㅈ434ㄴ</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k19.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k19.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>시 읽는 기쁨</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 정효구<br/>
+						 <b>소개:</b> 시 읽는 즐거움을 좀 더 맛보기 위한 쾌락주의적인 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.109 ㅈ351ㅅ</p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k20.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k20.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>시 읽는 기쁨 2</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 정효구<br/>
+						 <b>소개:</b> 시 읽는 즐거움을 좀 더 맛보기 위한 쾌락주의적인 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+          </div>
+					<div class="box col3 korean">
+          <div class="image">
+          	<a href="style/images/book/korean/k21.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/korean/k21.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>시 읽는 기쁨 3</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						<b>저자:</b> 정효구<br/>
+						<b>소개:</b> 시 읽는 즐거움을 좀 더 맛보기 위한 쾌락주의적인 책<br/>
+						<b>보유:</b> 미보유<br/><br/>
+						</p>
+          </div>
+					<!-- 문학(한) 끝-->
+
+					<!-- 문학(외) 시작-->
+          <div class="box col3 foreign">
+          <div class="image">
+          	<a href="style/images/book/foreign/f1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f1.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>어린왕자</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 생텍쥐페리<br/>
+						 <b>소개:</b> 어린왕자의 시선으로 모순된 어른들의 세계를 비추는 이야기<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 843 S137peK</p>
+          </div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f2.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>1984</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 조지 오웰<br/>
+						 <b>소개:</b> 전체주의 지배 시스템에서 개인의 저항을 다룬 디스토피아 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 823 O79nKㅈ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f3.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>거미 여인의 키스</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 마누엘 푸익<br/>
+						 <b>소개:</b> 아르헨티나의 혁명가가 감옥에 수감되어 생긴 일들을 그린 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 863 P979bKㅅ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f4.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>라마야나</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> R. K. 나라얀<br/>
+						 <b>소개:</b> 2천 년의 동양 고전을 인도 소설가 나라얀이 소설화한 작품<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 891.21 R165AKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f5.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f5.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>노르웨이의 숲</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 무라카미 하루키<br/>
+						 <b>소개:</b> 도시에서 살아가는 청춘의 아픔과 사랑을 그린 하루키의 대표작<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 813.3 ㅊ136ㄴKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f6.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f6.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>뉴욕 3부작</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 폴 오스터<br/>
+						 <b>소개:</b> 탐정 소설의 형식을 차용한 자아 탐색의 단편 모음집<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 823 A934nKㅎ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f7.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f7.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>루쉰 소설 전집</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 루쉰<br/>
+						 <b>소개:</b> 민족의 고뇌를 담은 루쉰 소설 33편을 모두 모은 소설집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 812.3 ㄴ247ㄴKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f8.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f8.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>맥베스</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 셰익스피어<br/>
+						 <b>소개:</b> 야망의 늪에 빠진 정직한 영혼이 파멸해 가는 이야기<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 822.33 S527mKㅊ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f9.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f9.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>바보들을 위한 학교</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 사샤 소콜로프<br/>
+						 <b>소개:</b> 정신분열증을 앓는 소년의 내면을 그려낸 성장소설<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f10.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f10.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>백년의 고독</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 가브리엘 마르케스<br/>
+						 <b>소개:</b> 신화적 요소를 도입하여 한 가문의 흥망성쇠를 다룬 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 863.64 M357cKㅈ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f11.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f11.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>모든 것이 산산이 부서지다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 치누아 아체베<br/>
+						 <b>소개:</b> 서구 세력에 맞서 부족의 문화와 풍습을 지키려는 이야기<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 823 A177tKㅈ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f12.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f12.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>악의 꽃</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 보들레르<br/>
+						 <b>소개:</b> 프랑스의 상징주의 시인 보들레르의 삶의 역경이 담긴 시집<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 841 B338fKㅎ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f13.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f13.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>에르미따</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 시오닐 호세<br/>
+						 <b>소개:</b> 필리핀 근현대사를 배경으로, 매춘부가 된 여성의 이야기<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f14.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f14.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>일리아스</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 호메로스<br/>
+						 <b>소개:</b> 그리스 문화의 원형이자 서양 정신의 출발점인 장편 서사시<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 883 H766iKㅇ2</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f15.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f15.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>잃어버린 환상</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 오노레 드 발자크<br/>
+						 <b>소개:</b> 근대인이 추구하는 정신과 물질과 명예의 꿈이 그려진 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 843 B198iKㅇ2</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f16.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f16.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>적절한 균형</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 로힌턴 미스트리<br/>
+						 <b>소개:</b> 인도의 현대사를 배경으로 인물들의 행복과 불행을 그린 소설<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f17.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f17.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>제노사이드</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 다카노 가즈아키<br/>
+						 <b>소개:</b> 인류 종말의 위협과 이를 둘러싼 음모를 담은 추리 스릴러<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 813.3 ㄱ336ㅈKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f18.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f18.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>제로 형제의 시련</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 월레 소잉카<br/>
+						 <b>소개:</b> 독립 전후 나이지리아 사회의 어두운 일면을 지적한 풍자극<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f19.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f19.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>창문 넘어 도망친 100세 노인</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 요나스 요나손<br/>
+						 <b>소개:</b> 스웨덴 시골에서 태어난 노인이 살아온 100년 세월을 그린 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 839.738 J76hKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f20.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f20.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>천 개의 찬란한 태양</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 할레드 호세이니<br/>
+						 <b>소개:</b> 아프가니스탄 출신의 작가가 그려낸 두 여자 이야기<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 823 H829tKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f21.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f21.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>카라마조프가의 형제들</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 도스토예프스키<br/>
+						 <b>소개:</b> 인간 존재의 근본 문제에 대한 문학적 성찰이 담긴 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 891.7 D724bKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f22.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f22.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>파우스트</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 요한 볼프강 폰 괴테<br/>
+						 <b>소개:</b> 중세 유럽에서 전하는 파우스트 박사 이야기를 극화한 작품<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 832.6 G599fKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f23.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f23.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>파이 이야기</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 얀 마텔<br/>
+						 <b>소개:</b> 열여섯 살 인도 소년 파이가 겪은 227일 간의 표류기<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 823 M376lKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f24.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f24.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>폭풍의 언덕</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 에밀리 브론테<br/>
+						 <b>소개:</b> 영국의 황량한 들판을 배경으로 사랑과 복수를 그린 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 823 B869wKㅅ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f25.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f25.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>전쟁의 슬픔</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 바오 닌<br/>
+						 <b>소개:</b> 전쟁의 비극성을 극명하게 보여준 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 895.922 ㅂ112ㅈKㅂ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f26.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f26.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>왜 나는 너를 사랑하는가</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 알랭 드 보통<br/>
+						 <b>소개:</b> 남녀의 심리와 메카니즘이 철학적 사유와 함께 기술<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 823 B751eKㅈ2</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f27.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f27.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>나르치스와 골드문트</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 헤르만 헤세<br/>
+						 <b>소개:</b> 아버지와 어머니로 대표되는 두 세계의 대립과 융합에 관한 이야기<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 833 H587nKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f28.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f28.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>행복의 지도</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 에릭 와이너<br/>
+						 <b>소개:</b> 행복의 정체를 밝히려는 흥미로운 모험담<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 910.4 W423gKㄱ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f29.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f29.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>불안</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 알랭 드 보통<br/>
+						 <b>소개:</b> 사회적 지위와 관련된 불안에 대해 자세하게 알아보는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 305.51 B751sKㅈ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f30.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f30.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>존재의 세가지 거짓말(상)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아고타 크리스토프<br/>
+						 <b>소개:</b> 쌍둥이 형제의 처절한 운명이 교차하는 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 843 K92gKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f31.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f31.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>존재의 세가지 거짓말(중)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아고타 크리스토프<br/>
+						 <b>소개:</b> 쌍둥이 형제의 처절한 운명이 교차하는 소설<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f32.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f32.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>존재의 세가지 거짓말(하)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아고타 크리스토프<br/>
+						 <b>소개:</b> 쌍둥이 형제의 처절한 운명이 교차하는 소설<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f33.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f33.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>사랑의 기술</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 에리히 프롬<br/>
+						 <b>소개:</b> 개인의 무의식층에까지 파고들어가 인간의 내면 세계를 분석<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 177.7 F932ㅅKㅇ</p>
+					</div>
+					<div class="box col3 foreign">
+					<div class="image">
+						<a href="style/images/book/foreign/f34.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/foreign/f34.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>마의 산 (상,하)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 토마스 만<br/>
+						 <b>소개:</b> 토마스 만이 자신의 정신적 삶의 궤적을 기록한 소설<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 833 M282zKㄱ</p>
+					</div>
+
+
+					<!-- 문학(외) 끝-->
+
+					<!-- 인문사회 시작-->
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h1.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>증여론</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 마르셀 모스<br/>
+						 <b>소개:</b> 선물 교환의 유형과 사회적 구조의 관계를 정립한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 301.01 ㄹ134ㅁ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h2.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>간디 자서전</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 마하트마 간디<br/>
+						 <b>소개:</b> 진실을 추구하는 인간으로서 간디의 면모를 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 954.035092</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h3.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>감옥으로부터의 사색</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 신영복<br/>
+						 <b>소개:</b> 20년간 수감 생활을 한 작가의 소회와 고뇌를 담은 산문집<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 811.6 ㅅ574ㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h4.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>검은 피부 하얀 가면</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 프란츠 파농<br/>
+						 <b>소개:</b> 알제리 독립 전쟁을 배경으로 한 식민주의 심리학<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 306.08996 F214pKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h5.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h5.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>경영의 모험</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 존 브룩스<br/>
+						 <b>소개:</b> 기업의 본질과 그 안의 인간 본성을 깊이 있게 들여다본 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 650.0973 B873bKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h6.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h6.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>고독한 군중</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 데이비드 리스먼<br/>
+						 <b>소개:</b> 군중의 심리 분석과 대중사회의 매커니즘을 파헤친 고전<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 136.4973 R561lKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h7.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h7.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>국부론</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아담 스미스<br/>
+						 <b>소개:</b> 나라의 부에 영향을 미치는 분야를 종합적으로 분석한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 330.153 S642iKㅊ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h8.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h8.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>나를 부르는 숲</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 빌 브라이슨<br/>
+						 <b>소개:</b> 길에서 만난 우정과 대자연에 대한 이야기를 그린 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 917.40443</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h9.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h9.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>낯선 곳에서 나를 만나다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 한국문화인류학회<br/>
+						 <b>소개:</b> 학생과 일반인이 접근하기 쉽게 다듬은 문화인류학 입문서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 306 ㅎ155ㄴ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h10.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h10.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>대한민국은 왜?</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 김동춘<br/>
+						 <b>소개:</b> 대한민국의 주류 세력의 형성과 권력 행사 과정을 다룬 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 320.951 ㄱ595ㄷ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h11.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h11.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>리바이어던</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 토마스 홉스<br/>
+						 <b>소개:</b> 17세기 사회계약론자의 인간관과 국가관을 볼 수 있는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 320.1 H682lKㅊ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h12.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h12.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>미움받을 용기</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 기시미 이치로<br/>
+						 <b>소개:</b> 철학자와 청년이 행복한 인생을 위한 답을 찾아가는 심리학 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 150.195 ㅇ145ㅎKㅈ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h13.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h13.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>분노하라</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 스테판 에셀<br/>
+						 <b>소개:</b> 무관심이야말로 최악의 태도라는 메시지를 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 323.04 H587iKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h14.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h14.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>블루오션 전략</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 김위찬, 르네 마보안<br/>
+						 <b>소개:</b> 블루오션 전략으로 성공한 기업들의 다양한 사례를 제시한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 658.802 ㄱ794bKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h15.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h15.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>사회를 구하는 경제학</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 조형근, 김종배<br/>
+						 <b>소개:</b> 한국사회의 사회, 경제적 쟁점을 고찰한 경제학 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h16.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h16.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>삶을 위한 철학수업</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이진경<br/>
+						 <b>소개:</b> 인터넷 카페 회원들과 교감한 일상의 철학 이야기를 묶은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 102 ㅇ887ㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h17.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h17.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>생명의 윤리를 말하다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 마이클 샌델<br/>
+						 <b>소개:</b> 유전공학 시대의 윤리라는 주제를 쉽게 풀어낸 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 174.957 S214cKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h18.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h18.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>세계화의 윤리</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 피터 싱어<br/>
+						 <b>소개:</b> 세계화 담론의 도덕적 의미를 논증한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 303.482 S617oKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h19.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h19.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>소크라테스의 변명</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 플라톤<br/>
+						 <b>소개:</b> 소크라테스가 재판에서 어떤 말로 자신을 옹호했는지 재현하는 형식<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 184 P718ㅅKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h20.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h20.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>연암에게 글쓰기를 배우다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 박현찬, 설흔<br/>
+						 <b>소개:</b> 박지원의 글쓰기 비밀을 추적하여 글쓰기 방법을 제시한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 843 K92gKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h21.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h21.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>예루살렘의 아이히만</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 한나 아렌트<br/>
+						 <b>소개:</b> 아돌프 아이히만의 재판 참관을 바탕으로 한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 940.5318092</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h22.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h22.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>용재총화</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 성현<br/>
+						 <b>소개:</b> 조선 전기의 역사, 문화, 풍속, 제도를 기록한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 811.98 ㅅ241요Kㅎ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h23.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h23.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>우주의 끝에서 철학하기</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 마크 롤랜즈<br/>
+						 <b>소개:</b> SF영화를 통해 철학의 주요 문제들을 살펴보는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 791.43684 R883pKㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h24.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h24.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>인간답게 죽는다는 것</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 야마카타 겐지<br/>
+						 <b>소개:</b> '인간답게 죽는 것’에 대한 답을 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 610.73 ㅅ195ㅇKㄱ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h25.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h25.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>조화로운 삶</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 헬렌 & 스콧 니어링<br/>
+						 <b>소개:</b> 자연 속에서 실천한 조화로운 삶의 원칙과 생활을 기록한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 917.43 N354lKㄹ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h26.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h26.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>인간의 본성을 말하다</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 노암 촘스키, 미셀 푸코<br/>
+						 <b>소개:</b> '인간의 본성'에 관한 두 철학자의 생각을 담은 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h27.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h27.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>텔레비전에 대하여</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 피에르 부르디 외<br/>
+						 <b>소개:</b> 텔레비전이 예술, 문학, 철학, 정치와 갖는 관계를 설명한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 384.55 B769sKㅎ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h28.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h28.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>파놉티콘</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 홍성욱<br/>
+						 <b>소개:</b> 사이버시대의 전자 감시, 데이터 감시에 관한 연구서<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 303.4 ㅎ248ㅍ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h29.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h29.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>프로이트의 의자</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 정도언<br/>
+						 <b>소개:</b> 쌍둥이 형제의 처절한 운명이 교차하는 소설<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 150.195 ㅈ193ㅍ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h30.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h30.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>호모 루덴스</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 요한 호이징아<br/>
+						 <b>소개:</b> 인간의 존재와 행위 양식의 본질을 규명하는 시도를 보여준 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 901 H911hKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h31.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h31.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>불황의 경제학</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 폴 크루그먼<br/>
+						 <b>소개:</b> 경기침체와 장기불황에 어떻게 대비해야 할지를 전달하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 330 K94rKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h32.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h32.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>다산 정약용 유배지에서 만나</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 박석무<br/>
+						 <b>소개:</b> 다산의 시대와 사상을 종합적으로 만날 수 있는 일대기<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 181.158 ㅂ196ㄷ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h33.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h33.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>보이는 것과 보이지 않는 것</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 모리스 메를로 퐁티<br/>
+						 <b>소개:</b> 통상의 사유 습관으로는 직접 이해할 수 없는 어떤 사고 영역으로 안내<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 111 M564vKㄴ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h34.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h34.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>총 균 쇠</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 재레드 다이아몬드<br/>
+						 <b>소개:</b> 인간 사회의 다양한 문명은 어디서 비롯되는지 명쾌하게 분석<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 303.4 D537gKㄱ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h35.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h35.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>국가</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 플라톤<br/>
+						 <b>소개:</b> 여러 문제에 대한 철학적 주제들을 제시<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 184 P718pKㅊ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h36.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h36.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>군주론</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 마키아벨리<br/>
+						 <b>소개:</b> 피렌체의 자유가 지켜지기를 바라는 마음으로 저술한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 320.1 M149pKㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h37.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h37.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>택리지</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 이중환<br/>
+						 <b>소개:</b> 체계적인 한국 지리학의 원형을 제시한 저작<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 951.19 ㅇ881ㅌ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h38.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h38.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>감시와 처벌</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 미셸 푸코<br/>
+						 <b>소개:</b> 감옥의 탄생 과정을 심층적으로 고찰한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 365 F762sKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h39.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h39.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>모던 타임스 1,2</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 폴 존슨<br/>
+						 <b>소개:</b> 1920년대부터 1990년대까지 70여년의 현대사를 다룬 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 909.82 J68m2Kㅈ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h40.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h40.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>광기의 역사</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 미셸 푸꼬<br/>
+						 <b>소개:</b> 광기에 대해 다른 시각을 제시하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 194 F762hKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h41.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h41.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>마르크스의 유령들</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 자크 데리다<br/>
+						 <b>소개:</b> 마르크스 해석 작업의 중요한 쟁점임을 밝히려는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 335.4 D438sKㅈ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h42.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h42.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>정신분석의 네 가지 근본개념</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 자크 라캉<br/>
+						 <b>소개:</b> 라캉의 열한번째 '구술'세미나를 책으로 옮긴 것<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 150.195 L129qKㅁ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h43.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h43.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>전체주의의 기원 1,2</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 한나 아렌트<br/>
+						 <b>소개:</b> 홀로코스트라는 극악무도한 참상의 원인 이해를 위해 전체주의 설명<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 320.533 A681oKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h44.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h44.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>20세기 역사(상)</b></a></h4>
+					<p><img src="style/images/rating/rating5.png" alt="" />
+						 <b>저자:</b> 에릭 홉스봄<br/>
+						 <b>소개:</b> 제1차 세계대전부터 구소련 붕괴까지의 20세기를 다룬 통사<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h45.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h45.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>20세기 역사(하)</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 에릭 홉스봄<br/>
+						 <b>소개:</b> 제1차 세계대전부터 구소련 붕괴까지의 20세기를 다룬 통사<br/>
+						 <b>보유:</b> 미보유<br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h46.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h46.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>세계 시민주의</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 콰메 앤터니 애피아<br/>
+						 <b>소개:</b> 윤리학의 원천이자 영감을 세계시민주의에서 찾고 있는 책<br/>
+						 <b>보유:</b> 미보유<br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h47.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h47.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>공간의 시학</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 가스통 바슐라르<br/>
+						 <b>소개:</b> 공간의 이미지를 중점으로 하여 공간의 인간적인 가치를 규명<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 808.1 B119pKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h48.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h48.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>고삐 풀린 현대성</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 아르준 아파두라이<br/>
+						 <b>소개:</b> 초국가적 세계의 전 지구적 문화에 대하여 심도 있게 탐구<br/>
+						 <b>보유:</b> 미보유<br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h49.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h49.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>뜻으로 본 한국역사</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 함석헌<br/>
+						 <b>소개:</b> 우리 역사에 대해 강연했던 것을 풀이한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 951 ㅎ171ㄸ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h50.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h50.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>삐딱하게 보기</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 슬라보예 지젝<br/>
+						 <b>소개:</b> 라캉의 정신분석 이론을 소개한 입문서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 306.1 Z82lKㄱ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h51.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h51.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>대담</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 도정일<br/>
+						 <b>소개:</b> 인문학과 자연과학이라는 두 세계의 깊이 있는 만남을 시도한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 001.3 ㄷ325ㄷ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h52.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h52.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>세계화의 원근법</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 강상중<br/>
+						 <b>소개:</b> 세계화의 원근법을 통해 일본사회의 변화를 포착<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 303.40953</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h53.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h53.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>문화의 세계화</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 쟝 피에르 바르니에<br/>
+						 <b>소개:</b> 문화산업의 세계적 파노라마부터 민주주의 문제까지 살펴보는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 301.2 W285mKㅈ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h54.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h54.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>강의(나의 동양고전 독법)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 신영복<br/>
+						 <b>소개:</b> 근본적인 시각으로 재조명하는 신영복 선생의 동양고전 강의<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 181.1 ㅅ574ㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h55.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h55.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>에밀 또는 교육론 1</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 장 자크 루소<br/>
+						 <b>소개:</b> 영혼의 완전성을 가진 존재로서 어린이를 발견하고 있는 작품<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 370.1 R864eKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h56.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h56.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>에밀 또는 교육론 2</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 장 자크 루소<br/>
+						 <b>소개:</b> 영혼의 완전성을 가진 존재로서 어린이를 발견하고 있는 작품<br/>
+						 <b>보유:</b> 미보유<br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h57.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h57.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>위험한 생각들</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 존 브록만<br/>
+						 <b>소개:</b> 세계적인 석학들의 인간과 세계에 대한 진실에 대한 생각들을 엮은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 001 B864wKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h58.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h58.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>지식인을 위한 변명</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 장 폴 사르트르<br/>
+						 <b>소개:</b> 세 차례 행해진 사르트르의 강연을 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 194 S251pKㅂ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h59.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h59.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>징비록</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 유성룡<br/>
+						 <b>소개:</b> 역사적 재앙을 통해 우리 자신을 돌아보게 하는 '임진왜란 통한의 기록'<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 951.54 ㅇ422징</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h60.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h60.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>촛불의 미학</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 가스똥 바슐라르<br/>
+						 <b>소개:</b> 인식과 상상력에 대해서 말하고자 하는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 111.85 B119fKㅇ2</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h61.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h61.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>한국과 그 이웃 나라들</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이사벨라 버드 비숍<br/>
+						 <b>소개:</b> 1백년 전 한국의 정치.경제.사회.문화.풍속을 체 험으로 기록한 저술<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 951.902 ㅇ723kKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h62.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h62.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>근대를 다시 읽는다</b></a></h4>
+					<p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 윤해동<br/>
+						 <b>소개:</b> 낡고 오래된 가치와 학문적 방법을 과감히 넘어서고자 한 글<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 951.903 ㄱ467</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h63.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h63.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>대화</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 리영희<br/>
+						 <b>소개:</b> 지식인로서의 살아간다는 것이 어떠한 일인지를 생생하게 증언<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 070.92 ㄹ135ㄷ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h64.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h64.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>민주화 이후의 민주주의</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 최장집<br/>
+						 <b>소개:</b> 한국 민주주의의 기원과 구조, 변화를 다룬 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 843 K92gKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h65.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h65.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>사기</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 사마천<br/>
+						 <b>소개:</b> 사마천이 지은 130권에 이르는 방대한 역사서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 952 ㅅ157ㅅKㅊ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h66.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h66.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>사랑은 지독한 그러나 너무나</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 울리히 벡 외<br/>
+						 <b>소개:</b> 현대사회의 다양한 변화를 분석하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 306.8 B393gKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h67.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h67.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>책 읽는 여자는 위험하다</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 슈테판 볼만<br/>
+						 <b>소개:</b> 책 읽는 여자들의 위험한 매력을 그림을 통해 보여주는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 028.9 B692fKㅈ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h68.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h68.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>티베트의 지혜</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 소걀 린포체<br/>
+						 <b>소개:</b> 죽음의 참된 의미를 들려주는 책<br/>
+						 <b>보유:</b> 미보유<br/><br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h69.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h69.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>제국의 선택</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 즈비그뉴 브레진스키<br/>
+						 <b>소개:</b> 미국이 이스라엘과 팔레스타인의 갈등의 해결책 제시<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 327.73 B916cKㄱ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h70.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h70.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>교양</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 디트리히 슈바니츠<br/>
+						 <b>소개:</b> 음악, 미술, 문학, 철학, 과학, 교육 등 굵직한 개요를 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 909.09812 S398bKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h71.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h71.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>명상록</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 마르쿠스 아우렐리우스<br/>
+						 <b>소개:</b> 마르쿠스 아우렐리우스 머릿속에 떠오른 생각을 단편적으로 기록<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 188 A927mKㅇ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h72.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h72.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>서유견문</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 유길준<br/>
+						 <b>소개:</b> 서양 근대 문물을 집대성한 당대 최고 수준의 서양 입문서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 910.4 ㅇ412ㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h73.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h73.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>세계화와 그 불만</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 조지프 스티글리츠<br/>
+						 <b>소개:</b> 세계 경제체제의 여러 측면들을 볼 수 있는 창을 열어주는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 337 S855gKㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h74.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h74.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>손자병법</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 손무<br/>
+						 <b>소개:</b> 동서양의 장수와 각계의 리더들이 앞다퉈 찾는 병법 철학서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 181.11 ㅅ323ㅅKㄴ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h75.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h75.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>한국속의 세계(상)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 정수일<br/>
+						 <b>소개:</b> 역사와 문화를 다시 바라보게 하는 역사 교양서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 951 ㅈ255ㅎ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h76.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h76.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>한국속의 세계(하)</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 정수일<br/>
+						 <b>소개:</b> 역사와 문화를 다시 바라보게 하는 역사 교양서<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h77.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h77.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>대화의 철학 소크라테스</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 고트프리트 마르틴<br/>
+						 <b>소개:</b> 소크라테스에 대한 다양한 보고와 증언, 평가들을 균형있게 종합<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+						 </p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h78.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h78.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>국가론</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 장 보댕<br/>
+						 <b>소개:</b> 국가의 개념을 명확하게 정립<br/>
+						 <b>보유:</b> 미보유<br/><br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h79.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h79.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>월러스틴의 세계체제 분석</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이매뉴얼 월러스틴<br/>
+						 <b>소개:</b> 세계체제의 미래에 대해 서술하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 330.122 W198ㅅKㅅ</p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h80.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h80.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>자유</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 지그문트 바우만<br/>
+						 <b>소개:</b> 소비적 자유를 넘어서는 진정한 자유가 가능한가를 묻고 있는 책<br/>
+						 <b>보유:</b> 미보유<br/><br/></p>
+					</div>
+					<div class="box col3 humanities">
+					<div class="image">
+						<a href="style/images/book/humanities/h81.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/humanities/h81.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>괴짜 경제학</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 스티븐 레빗<br/>
+						 <b>소개:</b> 자본주의의 강력한 힘인 정보에 관해 설명하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 330 L666fKㅇ</p>
+					</div>
+
+
+					<!-- 인문사회 끝-->
+
+					<!-- 과학 시작-->
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s1.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>과학혁명의 구조</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 토마스 쿤<br/>
+						 <b>소개:</b> 현대 물질문명을 받쳐주는 과학의 본질적 성격을 파헤친 고전<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 501 K96sKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s2.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>부분과 전체</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 베르너 하이젠베르크<br/>
+						 <b>소개:</b> 하이젠베르크가 과학의 발전과 인생의 의미에 대해 성찰한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 539.7 H473tKㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s3.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>인간은 왜 늙는가</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 스티븐 어스태드<br/>
+						 <b>소개:</b> 노화에 대해 탐색하여 이를 극복할 방안을 모색하는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 612.67 A932wKㅊ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s4.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>객관성의 칼날</b></a></h4>
+					<p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 찰스 길리스피<br/>
+						 <b>소개:</b> 과학의 역사와 오류의 변화를 알려주는 과학사 에세이<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 501 G481eKㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s5.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s5.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>그림으로 보는 시간의 역사</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 스티븐 호킹<br/>
+						 <b>소개:</b> 우주와 시간의 역사로 우주의 본질에 대한 이론을 다룬 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 523.1 H392bKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s6.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s6.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>다윈의 서재</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 장대익<br/>
+						 <b>소개:</b> 46명의 과학자가 쓴 56권의 책을 만날 수 있는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 502 ㅈ113ㅅ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s7.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s7.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>만들어진 신</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 리처드 도킨스<br/>
+						 <b>소개:</b> 출간과 동시에 과학계와 종교계에 파란을 일으킨 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 211.8 D271gKㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s8.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s8.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>빅 히스토리</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 데이비드 크리스천<br/>
+						 <b>소개:</b> 137억년 우주의 관점에서 자연과 인간의 역사를 조망한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 901 C555mKㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s9.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s9.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>우연을 길들이다</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 이언 해킹<br/>
+						 <b>소개:</b> 통계가 어떻게 우연을 과학으로 만들었는지 살펴보는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 123.3 H121tKㅈ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s10.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s10.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>인간적인, 너무나 인간적인 뇌</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 리처드 레스탁<br/>
+						 <b>소개:</b> 마음과 관련된 중요한 질문 20가지에 관한 답변을 담고 있는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 612.82 R436bKㅎ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s11.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s11.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>의학, 인문으로 치유하다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 예병일<br/>
+						 <b>소개:</b> 인간을 의식을 가진 생명체로 바라보며 치유를 모색하는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 610 ㅇ259ㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s12.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s12.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>종의 기원 2013</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 찰스 로버트 다윈<br/>
+						 <b>소개:</b> 생물의 진화론을 확립하여 많은 학문에 큰 영향을 미친 고전<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 575 D228oKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s13.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s13.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>축적의 시간</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 서울대학교 공과대학<br/>
+						 <b>소개:</b> 우리 산업의 당면 문제를 진단한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 338.0951 ㅅ219ㅊ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s14.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s14.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>침묵의 봄</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 레이첼 카슨<br/>
+						 <b>소개:</b> 환경 문제의 심각성과 중요성을 일깨워 준 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 363.7384 C321sKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s15.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s15.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>LHC, 현대 물리학의 최전선</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 이강영<br/>
+						 <b>소개:</b> 힉스 입자 발견을 둘러싸고 물리학계에서 일어난 일을 다룬 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 539 ㅇ564l</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s16.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s16.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>이중나선</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 제임스 왓슨<br/>
+						 <b>소개:</b> 과학자들의 비하인드 스토리를 직설적이고 유머스럽게 써내려간 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 574.873282</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s17.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s17.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>인간등정의 발자취</b></a></h4>
+					<p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 제이콥 브로노우스키<br/>
+						 <b>소개:</b> 다큐멘터리로 방영될 때 숱한 화제를 불러모았던 내용들을 묶은 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 509 ㅂ436ㅇKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s18.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s18.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>이분법을 넘어서</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 장회익<br/>
+						 <b>소개:</b> 학문의 통합과 소통을 위한 물리학자와 철학자의 대화를 정리한 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+					</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s19.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s19.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>인간의 얼굴을 한 과학</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 홍성욱<br/>
+						 <b>소개:</b> 문화로서의 과학이 가지는 여러 가지 '얼굴'을 분석하고 있는 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 502 ㅎ248ㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s20.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s20.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>생명의 그물</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 프리초프 카프라<br/>
+						 <b>소개:</b> 현대과학의 중심문제들을 집약적으로 알기 쉽게 해설 한 저서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 574.5 C251wKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s21.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s21.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>우주와 인간 사이 질문을</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 김정욱<br/>
+						 <b>소개:</b> 현대과학이 제시할 수 있는 최선의 답은 어떤 것인지 보여주는 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+					</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s22.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s22.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>자연과학의 세계 1</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 김희준<br/>
+						 <b>소개:</b> 김희준 교수의 강의내용을 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 500 ㄱ997ㅈ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s23.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s23.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>자연과학의 세계 2</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 김희준<br/>
+						 <b>소개:</b> 김희준 교수의 강의내용을 담은 책<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+					</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s24.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s24.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>거의 모든것의 역사</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 빌 브라이슨<br/>
+						 <b>소개:</b> 무슨 일이 일어났는가를 보여주는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 500 B916sKㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s25.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s25.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>우리 과학 100년</b></a></h4>
+					<p><img src="style/images/rating/rating5.png" alt="" />
+						 <b>저자:</b> 신동원<br/>
+						 <b>소개:</b> 한국 과학과 관련한 몇 가지 사회 현상에 이르기까지 개괄한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 509.51 ㅂ199ㅇ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s26.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s26.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>이기적 유전자</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 리처드 도킨스<br/>
+						 <b>소개:</b> 이기적 유전자를 존속시키기 위해 프로그램된 기계인지 살펴보는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 576.5 D271sKㅇ2</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s27.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s27.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>최초의 3분</b></a></h4>
+					<p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 스티븐 와인버그<br/>
+						 <b>소개:</b> 광대한 우주의 시작, 그 위대한 창조의 최초 3분간에 대한 보고서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 523.1 W423fKㅅ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s28.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s28.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>희망의 밥상</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 제인 구달<br/>
+						 <b>소개:</b> 어떻게 생산되고 어떤 경로로 밥상에까지 올라왔는지에 관한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 641.3002 G646hKㄱ</p>
+          </div>
+					<div class="box col3 science">
+          <div class="image">
+          	<a href="style/images/book/science/s29.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/science/s29.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>과학과 종교 사이에서</b></a></h4>
+					<p><img src="style/images/rating/rating7.png" alt="" />
+						 <b>저자:</b> 김용준<br/>
+						 <b>소개:</b> 과학과 종교의 통합적 인식을 향한 연구 궤적을 담은 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 261.5 ㄱ781ㄱ</p>
+          </div>
+					<!-- 과학 끝-->
+
+					<!-- 예술 시작-->
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a1.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>건축가 없는 건축</b></a></h4>
+          <p><img src="style/images/rating/rating10.png" alt="" />
+						 <b>저자:</b> 버날드 루돌프스키<br/>
+						 <b>소개:</b> 기존의 건축 계보에 포함되지 않던 토속 건축을 소개하는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 720 R917aKㄱ</p>
+          </div>
+					<div class="box col3 art">
+					<div class="image">
+						<a href="style/images/book/art/a2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a2.jpg" width="auto"; height="300px"; alt="" /></a>
+					</div>
+					<h4><b>그림 아는 만큼 보인다</b></a></h4>
+					<p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 손철주<br/>
+						 <b>소개:</b> 작품 너머의 ‘이야기’로 독자들을 그림의 세계로 안내하는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 750.118 ㅅ327ㄱ2</p>
+					</div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a3.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>기술복제시대의 예술작품</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 발터 벤야민<br/>
+						 <b>소개:</b> 벤야민의 사상을 체계적으로 이해할 수 있도록 한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 700.1 B468kKㅊ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a4.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>무량수전 배흘림 기둥에 서서</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 최순우<br/>
+						 <b>소개:</b> 한국미의 현장을 사색적으로 터치한 글들을 모아 놓은 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 709.51 ㅊ238ㅁ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a5.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a5.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>문학과 예술의 사회사 4</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아놀드 하우저<br/>
+						 <b>소개:</b> <문학과 예술의 사회사>의 25년여 만의 개정판<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 709 H376sKㅂ2</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a6.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a6.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>미의 역사</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 움베르트 에코<br/>
+						 <b>소개:</b> '미'라는 관념이 어떻게 변화되어 왔는지를 추적한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 111.85 E19sKㅇ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a7.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a7.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>미학 오디세이 1</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 진중권<br/>
+						 <b>소개:</b> 작가 특유의 재담으로 이끌어가는 미학 이론서<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 701.17 ㅈ596ㅁ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a8.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a8.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>서양미술사</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 곰브리치<br/>
+						 <b>소개:</b> 서양미술사 개론의 필독서<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 709 G632s16Kㅂ<br/><br/></p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a9.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a9.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>시학</b></a></h4>
+          <p><img src="style/images/rating/rating9.png" alt="" />
+						 <b>저자:</b> 아리스토텔레스<br/>
+						 <b>소개:</b> 비극을 최고 문학으로 삼은 아리스토텔레스의 입장이 담긴 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 185 A717aKㅊ2</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a10.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a10.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>알랭 드 보통의 영혼의 미술관</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 알랭 드 보통<br/>
+						 <b>소개:</b> 예술을 즐기는 방식을 이야기하는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 701.18 D278aKㄱ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a11.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a11.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>예술이란 무엇인가</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 레프 톨스토이<br/>
+						 <b>소개:</b> 톨스토이의 예술관이 담긴 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 701 T654ЧKㄷ<br/><br/></p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a12.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a12.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>오주석의 한국의 미 특강</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 오주석<br/>
+						 <b>소개:</b> 한국 미술의 아름다움을 알리기 위한 강연 내용을 정리한 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 759.951 ㅇ336ㅎ2</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a13.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a13.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>철학을 삼킨 예술</b></a></h4>
+          <p><img src="style/images/rating/rating6.png" alt="" />
+						 <b>저자:</b> 한상연<br/>
+						 <b>소개:</b> 예술이 왜 아름다운지, 그 아름다움에 대해서 다루고 있는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 700.1 ㅎ158ㅊ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a14.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a14.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>컨템포러리 아트란 무엇인가</b></a></h4>
+          <p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 테리 스미스<br/>
+						 <b>소개:</b> 컨템포러리 아트에 대해 역사적 접근법으로 알려주는 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 709.05 S662wKㄱ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a15.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a15.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>흥남부두의 금순이는 어디로</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 이영미<br/>
+						 <b>소개:</b> 노래 가사를 통해 대중가요를 분석한 대중가요사<br/>
+						 <b>보유:</b> 미보유<br/><br/>
+					</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a16.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a16.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>미학적 인간 호모에스테티쿠스</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 엘렌 디사나야케<br/>
+						 <b>소개:</b> 예술이 진화해 온 인간의 생물학적 본성을 입증한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 701.17 D613hKㄱ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a17.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a17.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>대중 음악의 이해</b></a></h4>
+          <p><img src="style/images/rating/rating0.png" alt="" />
+						 <b>저자:</b> 사이먼 프리스 외<br/>
+						 <b>소개:</b> 대중 음악 연구의 주요 논점과 문제를 포괄적으로 설명한 책<br/>
+						 <b>보유:</b> 중앙도서관/보존자료실(1층)<br/>
+						 <b>위치:</b> 청구기호 781.64 F919cKㅈ</p>
+          </div>
+					<div class="box col3 art">
+          <div class="image">
+          	<a href="style/images/book/art/a18.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/book/art/a18.jpg" width="auto"; height="300px"; alt="" /></a>
+          </div>
+          <h4><b>문학과 예술의 사회사</b></a></h4>
+          <p><img src="style/images/rating/rating8.png" alt="" />
+						 <b>저자:</b> 아르놀트 하우저<br/>
+						 <b>소개:</b> 인간과 사회와 예술의 관계를 역동적으로 풀어낸 책<br/>
+						 <b>보유:</b> 중앙도서관/동양서실(2층)<br/>
+						 <b>위치:</b> 청구기호 709 H376sKㅂ3</p>
+          </div>
+					<!-- 예술 끝-->
+
+
+
 
         </div>
         <!-- .wrap -->
     </div>
     <!-- End Portfolio -->
 
-
-
-    <!-- Begin Footer -->
-    <div id="footer">
-  	<div class="footer-box one-third">
-  	<h3>Popular Posts</h3>
-			<ul class="popular-posts">
-				<li>
-					<a href="#"><img src="style/images/art/s1.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s2.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s3.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-			</ul>
-  	</div>
-  	<div class="footer-box one-third">
-  	<h3>About</h3>
-  	<p>Donec id elit non mi porta gravida at eget metus. Donec ullamcorper nulla non metus auctor fringilla.</p>
-  	<p>Lorem Ipsum Dolor Sit
-          Moon Avenue No:11/21
-          Planet City, Earth<br>
-          <br>
-          <span class="lite1">Fax:</span> +555 797 534 01<br>
-          <span class="lite1">Tel:</span> +555 636 646 62<br>
-          <span class="lite1">E-mail:</span> name@domain.com</p>
-
-
-  	</div>
-
-  	<div class="footer-box one-third last">
-  	<h3>Custom Text</h3>
-  	<p>Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit. </p>
-  	<p>Donec ullamcorper nulla non metus auctor fringilla. Maecenas faucibus mollis interdum. Curabitur blandit tempus porttitor.</p>
-  	</div>
-    </div>
-    <!-- End Footer -->
-
+		<br/>
+		<div class="line"></div>
 
 	</div>
 	<!-- End Content -->

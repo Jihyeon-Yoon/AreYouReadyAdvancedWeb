@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
 <meta charset="UTF-8">
-<title>Caprice</title>
+<title>AreYouReady?!</title>
 <link rel="shortcut icon" type="image/x-icon" href="style/images/favicon.png" />
 <link rel="stylesheet" type="text/css" href="style.css" media="all" />
 <link rel="stylesheet" type="text/css" media="screen" href="style/css/prettyPhoto.css"  />
@@ -25,6 +25,101 @@
 <script type="text/javascript" src="style/js/jquery.flexslider-min.js"></script>
 <script type="text/javascript" src="style/js/jquery.masonry.min.js"></script>
 <script type="text/javascript" src="style/js/jquery.slickforms.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+	<!-- Firebase App is always required and must be first -->
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+
+	<!-- Add additional services that you want to use -->
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+
+	<script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyA_-eCLWFI4rGFRheZab_B6YuwyBrYxn0s",
+            authDomain: "areyouready-a2972.firebaseapp.com",
+            databaseURL: "https://areyouready-a2972.firebaseio.com",
+            projectId: "areyouready-a2972",
+            storageBucket: "areyouready-a2972.appspot.com",
+            messagingSenderId: "366382434226"
+        };
+        firebase.initializeApp(config);
+
+
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+            .then(function() {
+                // Existing and future Auth states are now persisted in the current
+                // session only. Closing the window would clear any existing state even
+                // if a user forgets to sign out.
+                // ...
+                // New sign-in will be persisted with session persistence.
+                return firebase.auth().signInWithPopup(provider);
+            })
+            .catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            });
+
+
+
+
+
+        // Initialize Firebase
+        function login() {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+            var provider = new firebase.auth.GoogleAuthProvider();
+
+
+            // 인증하기
+            firebase.auth().signInWithPopup(provider).then(function (result) {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                var id= user.email;
+                alert("로그인 되었습니다.");
+                console.log(user)		// 인증 후 어떤 데이터를 받아오는지 확인해보기 위함.
+                $("#loginBtn").hide();
+                $("#logoutBtn").show();//...
+            }).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+        }
+        //로그아웃
+        function logout(){
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+            firebase.auth().signOut().then( () => {
+                console.log('logout sucess');
+                $("#loginBtn").show();
+                $("#logoutBtn").hide();
+
+            }).catch(function (error) {
+                console.log('code:' + error.code + 'message' + error.message);
+            });
+        }
+
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                $("#loginBtn").hide();
+
+            } else {
+                $("#logoutBtn").hide();
+            }
+        });
+
+	</script>
 
 </head>
 <body>
@@ -32,14 +127,14 @@
 <div id="wrapper">
 	<!-- Begin Sidebar -->
 	<div id="sidebar">
-		 <div id="logo"><a href="index.html"><img src="style/images/logo.png" alt="Caprice" /></a></div>
+		 <div id="logo"><a href="index.html"><img src="style/images/ayr_logo.png" width="200px"; height="60px"; alt="AreYouReady?!" /></a></div>
 
 	<!-- Begin Menu -->
 	<div id="menu" class="menu-v">
 		<ul>
-			<li><a href="home.html" >홈</a></li>
+			<li><a href="index.html">홈</a></li>
 			<li><a href="requirement.html">졸업요건</a></li>
-			<li><a href="credit2017.html">이수과목</a>
+			<li><a href="">이수과목</a>
 				<ul>
 					<li><a href="credit2017.html">2017</a></li>
 					<li><a href="credit2016.html">2016</a></li>
@@ -53,33 +148,29 @@
 			<li><a href="check.html">진행체크</a></li>
 			<li><a href="site.html" class="active">참고사이트</a></li>
 			<li><a href="bulletinBoard.html">게시판</a></li>
-			<li><a href="feedback.html">피드백</a></li>
+			<li><a href="mailto:wjsgudwls89@gmail.com">피드백</a></li>
+			<li id="loginBtn"><img src="style/images/login.png"  onclick="login()" width="80px"; height="35px"; alt="login" /></li>
+			<li id="logoutBtn"><img src="style/images/logout.png" onclick="logout()" width="80px"; height="35px"; alt="logout" /></li>
+
 		</ul>
 	</div>
     <!-- End Menu -->
 
-
-    <div class="sidebox">
+		<div class="sidebox">
     <ul class="share">
-    	<li><a href="#"><img src="style/images/icon-rss.png" alt="RSS" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-facebook.png" alt="Facebook" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-twitter.png" alt="Twitter" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-dribbble.png" alt="Dribbble" /></a></li>
-    	<li><a href="#"><img src="style/images/icon-linkedin.png" alt="LinkedIn" /></a></li>
-    </ul>
+	</ul>
     </div>
-
 
 	</div>
 	<!-- End Sidebar -->
 
+
 	<!-- Begin Content -->
 	<div id="content">
-	<h1 class="title">Portfolio</h1>
+	<h1 class="title">참고사이트</h1>
 	<div class="line"></div>
-	<div class="intro">Nullam id dolor id nibh ultricies vehicula ut id elit. Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</div>
-
-
+	<p>졸업 요건 충족에서 나아가 전공, 취업과 관련한 도움이 되는 사이트를 소개합니다.<br/>
+		공부할 수 있는 사이트, 영어 시험 일정, 코딩 대회, 취업 관련 사이트에 연결해드립니다.</p>
 
 
     <!-- Begin Portfolio -->
@@ -87,146 +178,208 @@
         <ul id="filtering-nav">
           <li class="show">Filter:</li>
           <li><a class="all" href="#all">All</a></li>
-          <li><a class="web" href="#web">Web</a></li>
-          <li><a class="photo" href="#photo">Photo</a></li>
-          <li><a class="video" href="#video">Video</a></li>
+          <li><a class="study" href="#study">공부</a></li>
+          <li><a class="english" href="#english">영어시험</a></li>
+          <li><a class="contest" href="#contest">코딩대회</a></li>
+					<li><a class="job" href="#job">취업정보</a></li>
         </ul>
         <div class="clear"></div>
         <div class="items">
-          <div class="box col1 web">
+					<!-- 공부 시작-->
+          <div class="box col1 study">
           	<div class="left-side">
-          		<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p4-1.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s1.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s1.png" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Euismod Ridiculus Mollis Sem</a></h4>
-          		<p>Donec ullamcorper nulla non metus auctor fringilla. Nulla vitae elit libero, a pharetra augue. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Etiam porta sem malesuada magna mollis.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>삼성 SW Expert Academy</b></h4>
+          		<p>SW Expert Academy는 삼성에서 운영하고 있는 아카데미로 SW 개발자에게 기본적으로 필요한 프로그래밍 역량을 키울 수 있는 다양한 학습 컨텐츠를 제공한다.</p>
+          		<a href="https://swexpertacademy.com/main/main.do" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 photo">
+					<div class="box col1 study">
           	<div class="left-side">
-          		<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p4-2.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s2.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s2.png" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Ligula Risus Porta Condimentum Consectetur</a></h4>
-          		<p>Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas sed diam eget risus varius blandit sit amet non magna. Donec id elit non mi porta gravida at eget metus.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>생활코딩</b></h4>
+          		<p>생활코딩은 일반인에게 컴퓨터 프로그래밍을 알려주는 것을 목적으로 하는 비영리 교육 프로젝트이다. 교육은 이고잉이 만든 오픈튜토리얼스에서 제공된다.</p>
+          		<a href="https://www.opentutorials.org/" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 video">
+					<div class="box col1 study">
           	<div class="left-side">
-          		<a href="http://vimeo.com/32364450" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p4-3.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s3.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s3.png" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Ultricies Quam Pellentesque</a></h4>
-          		<p>Cras mattis consectetur purus sit amet fermentum. Etiam porta sem malesuada magna mollis euismod. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>인프런</b></h4>
+          		<p>IT분야, 프로그래밍, 컴퓨터그래픽, 3D 모델링, 온라인 마케팅 등 전문 지식분야를 무료 혹은 경제적으로 학습할 수 있는 사이트이다.</p>
+          		<a href="https://www.inflearn.com/" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 web">
+					<div class="box col1 study">
           	<div class="left-side">
-          		<a href="style/images/art/p12-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p4-4.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s4.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s4.jpg" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Dolor Purus Mollis</a></h4>
-          		<p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Etiam porta sem malesuada magna mollis euismod. Sed posuere consectetur est at lobortis. Maecenas faucibus mollis interdum. Nulla vitae elit libero, a pharetra augue. Etiam porta sem malesuada magna mollis euismod.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>프로그래머스</b></h4>
+          		<p>프로그래머스에서는 프로그래밍 강의, 알고리즘 문제, 프로그래밍 대회, 블록체인 자료를 접할 수 있다.</p>
+          		<a href="https://programmers.co.kr/" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 video">
+					<div class="box col1 study">
           	<div class="left-side">
-          		<a href="http://www.youtube.com/watch?v=pyOyBVXDJ9Q" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p4-5.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s5.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s5.png" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Dolor Tristique Commodo</a></h4>
-          		<p>Donec id elit non mi porta gravida at eget metus. Nullam quis risus eget urna mollis ornare vel eu leo. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>백준 알고리즘</b></h4>
+          		<p>우리나라의 정보과학 알고리즘 트레이닝 사이트 중 하나이다. 다양한 언어의 지원과 단계별, 알고리즘별 문제 분류 및 대회 기출 문제들까지 정리되어 있다.</p>
+          		<a href="https://www.acmicpc.net/" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 photo">
+					<div class="box col1 study">
           	<div class="left-side">
-          		<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p4-6.jpg" alt="" /></a>
+          		<a href="style/images/site/s_s6.gif" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_s6.gif" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Aenean Nibh Ornare</a></h4>
-          		<p>Nullam id dolor id nibh ultricies vehicula ut id elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit libero, a pharetra augue. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>알고스팟</b></h4>
+          		<p>알고리즘 문제 해결 사이트이다. </p>
+          		<a href="https://algospot.com/" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 video">
+					<!-- 공부 끝-->
+
+					<!-- 영어시험 시작-->
+          <div class="box col1 english">
           	<div class="left-side">
-          		<a href="http://www.purple-twinkie.com//FlashMovies/swf/28-EyeCandy.swf?width=500&height=430" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay play"></span><img src="style/images/art/p4-7.jpg" alt="" /></a>
+          		<a href="style/images/site/s_e1.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_e1.png" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Elit Ullamcorper Parturient</a></h4>
-          		<p>Donec id elit non mi porta gravida at eget metus. Etiam porta sem malesuada magna mollis euismod. Donec id elit non mi porta gravida at eget metus. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>TOEIC</b></h4>
+          		<p>영어가 모국어가 아닌 사람들을 대상으로 언어 본래의 기능인 커뮤니케이션 능력에 중점을 두고 일상생활 또는 국제업무 등에 필요한 실용영어 능력을 평가하는 시험이다.</p>
+          		<a href="http://m.exam.ybmnet.co.kr/toeic/schedule/schedule.asp" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
-          <div class="box col1 web">
+					<div class="box col1 english">
           	<div class="left-side">
-          		<a href="style/images/art/p1-full.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/art/p4-8.jpg" alt="" /></a>
+          		<a href="style/images/site/s_e2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_e2.jpg" alt="" /></a>
           	</div>
           	<div class="right-side">
-          		<h4><a href="http://themes.iki-bir.com/caprice/portfolio-post.html">Venenatis Adipiscing Fusce</a></h4>
-          		<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet.</p>
-          		<a href="portfolio-post.html" class="button blue">View Project</a>
+          		<h4><b>TOEIC Speaking</b></h4>
+          		<p>TOEIC Speaking and Writing Tests(TOEIC 말하기, 쓰기 시험)의 도입으로 TOEIC 시험은 4개의 영어 능력(듣기, 읽기, 말하기,쓰기)모두를 측정하는 것이 가능하게 되었다.</p>
+          		<a href="http://appexam.ybmnet.co.kr/toeicswt/receipt/schedule.asp" target="_blank" class="button blue">Website</a>
           	</div>
           </div>
+					<div class="box col1 english">
+          	<div class="left-side">
+          		<a href="style/images/site/s_e3.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_e3.jpg" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>TOEFL</b></h4>
+          		<p>TOEFL iBT 시험은 대학 수준의 영어를 사용하고 이해할 수 있는 능력을 평가한다. 그리고 학술적 주제를 가진 과제를 수행하기 위해 reading, listening, speaking 및 writing 능력을 얼마나 잘 결합하는지를 평가한다.</p>
+          		<a href="http://www.ets.org/bin/getprogram.cgi?urlSource=toefl&newRegURL=&test=TOEFL&greClosed=new&greClosedCountry=China&browserType=&toeflType=&redirect=&t_country1=group_Korea%28Rok%29" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 english">
+          	<div class="left-side">
+          		<a href="style/images/site/s_e4.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_e4.png" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>OPIc</b></h4>
+          		<p>OPIc은 면대면 인터뷰인 OPI를 최대한 실제 인터뷰와 가깝게 만든 iBT 기반의 응시자 친화형 외국어 말하기 평가로서, 실제 생활에서 얼마나 효과적이고 적절하게 언어를 사용할 수 있는가를 측정하는 객관적인 언어 평가도구이다.</p>
+          		<a href="http://www.opic.or.kr/opics/servlet/controller.opic.site.receipt.AnnualScheduleServlet?p_process=select-list&p_nav=1_5" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<!-- 영어시험 끝-->
+
+					<!-- 코딩대회 시작-->
+          <div class="box col1 contest">
+          	<div class="left-side">
+          		<a href="style/images/site/s_c1.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_c1.png" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>ACM ICPC</b></h4>
+          		<p>ACM 국제 대학생 프로그래밍 대회는 매년 전세계 대학생들이 참가하여 실력을 겨루는 국제 컴퓨터 프로그래밍 대회이다.</p>
+          		<a href="http://icpckorea.org/" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 contest">
+          	<div class="left-side">
+          		<a href="style/images/site/s_c2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_c2.jpg" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>삼성 코드 그라운드</b></h4>
+          		<p>소프트웨어와 알고리즘 프로그래밍에 관심 있는 분이라면 누구나 가입하여 사용할 수 있는 개방된 온라인 실시간 코딩 사이트이다.</p>
+          		<a href="https://www.codeground.org/" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 contest">
+          	<div class="left-side">
+          		<a href="style/images/site/s_c3.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_c3.png" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>AtCoder</b></h4>
+          		<p>AtCoder는 초보자부터 전문가까지 모두를 위한 프로그래밍 콘테스트 사이트이다. 주간 프로그래밍 콘테스트를 온라인으로 개최한다.</p>
+          		<a href="https://atcoder.jp/" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<!-- 코딩대회 끝-->
+
+					<!-- 취업정보 시작-->
+          <div class="box col1 job">
+          	<div class="left-side">
+          		<a href="style/images/site/s_j1.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_j1.jpg" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>링크드인</b></h4>
+          		<p>LinkedIn은 200 개국 이상에서 5억 4천 6백만명 이상의 회원을 보유한 세계 최대의 비즈니스 네트워킹 사이트이다.</p>
+          		<a href="https://kr.linkedin.com/" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 job">
+          	<div class="left-side">
+          		<a href="style/images/site/s_j2.jpg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_j2.jpg" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>스펙업</b></h4>
+          		<p>국내 No.1 취업과 대외활동 커뮤니티이다. 대외활동/공모전부터 인턴/신입 채용정보까지 한번에 얻을 수 있다.</p>
+          		<a href="http://cafe.naver.com/specup" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 job">
+          	<div class="left-side">
+          		<a href="style/images/site/s_j3.png" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_j3.png" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>독취사</b></h4>
+          		<p>네이버 카페 랭킹 취업부문 1위 독취사(독하게 취업하는 사람들)에서 채용공고, 취업준비방법/팁 공개, 합격후기, 채용뉴스까지 얻을 수 있다.</p>
+          		<a href="http://cafe.naver.com/dokchi" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<div class="box col1 job">
+          	<div class="left-side">
+          		<a href="style/images/site/s_j4.jpeg" rel="prettyPhoto[portfolio]" title="Caption"><span class="overlay zoom"></span><img src="style/images/site/s_j4.jpeg" alt="" /></a>
+          	</div>
+          	<div class="right-side">
+          		<h4><b>공취사</b></h4>
+          		<p>공취사는 공사공단 취업을 목표로 하는 취업준비생들에게 채용정보 및 뉴스를 신속하고 정확하게 제공하고 회원들 간에 정보를 공유할 수 있도록 커뮤니티의 장을 만들어주는 카페다.</p>
+          		<a href="http://cafe.naver.com/uccplus" target="_blank" class="button blue">Website</a>
+          	</div>
+          </div>
+					<!-- 취업정보 끝-->
+
+
+
+
+
         </div>
         <!-- .wrap -->
     </div>
     <!-- End Portfolio -->
 
-
-
     <!-- Begin Footer -->
-    <div id="footer">
-  	<div class="footer-box one-third">
-  	<h3>Popular Posts</h3>
-			<ul class="popular-posts">
-				<li>
-					<a href="#"><img src="style/images/art/s1.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s2.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-				<li>
-					<a href="#"><img src="style/images/art/s3.jpg" alt="" /></a>
-					<h5><a href="#">Dolor Commodo Consectetur</a></h5>
-					<span>26 Aug 2011 | <a href="#">21 Comments</a></span>
-				</li>
-
-			</ul>
-  	</div>
-  	<div class="footer-box one-third">
-  	<h3>About</h3>
-  	<p>Donec id elit non mi porta gravida at eget metus. Donec ullamcorper nulla non metus auctor fringilla.</p>
-  	<p>Lorem Ipsum Dolor Sit
-          Moon Avenue No:11/21
-          Planet City, Earth<br>
-          <br>
-          <span class="lite1">Fax:</span> +555 797 534 01<br>
-          <span class="lite1">Tel:</span> +555 636 646 62<br>
-          <span class="lite1">E-mail:</span> name@domain.com</p>
-
-
-  	</div>
-
-  	<div class="footer-box one-third last">
-  	<h3>Custom Text</h3>
-  	<p>Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod. Nulla vitae elit. </p>
-  	<p>Donec ullamcorper nulla non metus auctor fringilla. Maecenas faucibus mollis interdum. Curabitur blandit tempus porttitor.</p>
-  	</div>
-    </div>
+		<br/>
+		<div class="line"></div>
     <!-- End Footer -->
-
 
 	</div>
 	<!-- End Content -->
